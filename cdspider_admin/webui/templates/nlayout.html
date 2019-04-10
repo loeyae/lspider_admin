@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}{% endblock %}数据采集平台-博彦多彩</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+        {% block custom_header %}{% endblock custom_header %}
+        <!--[if lt IE 9]>
+          <script src="{{ url_for('static', filename='js/ie/respond.min.js') }}"></script>
+          <script src="{{ url_for('static', filename='js/ie/html5.js') }}"></script>
+        <![endif]-->
+    </head>
+    <body>
+        <!-- header -->
+        <header id="header" class="navbar bg bg-black">
+            <a href="#" class="btn btn-link pull-right" data-toggle="class:bg-inverse" data-target="html"><i class="icon-lightbulb icon-xlarge text-default"></i></a>
+            <a class="navbar-brand" href="/">数据采集平台</a>
+        </header>
+        <!-- header end -->
+        {% block body %}{% endblock %}
+        <!-- footer -->
+        <footer id="footer">
+            <div class="text-center padder clearfix">
+                <p>
+                    <small>&copy; 博彦多彩 </small><br><br>
+                    <!--<a href="#" class="btn btn-mini btn-circle btn-twitter"><i class="icon-twitter"></i></a>-->
+                    <!--<a href="#" class="btn btn-mini btn-circle btn-facebook"><i class="icon-facebook"></i></a>-->
+                    <!--<a href="#" class="btn btn-mini btn-circle btn-gplus"><i class="icon-google-plus"></i></a>-->
+                </p>
+            </div>
+        </footer>
+        <!-- / footer -->
+        <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+        <!-- Bootstrap -->
+        <script src="{{ url_for('static', filename='js/bootstrap.js') }}"></script>
+        <!-- app -->
+        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/app.plugin.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/app.data.js') }}"></script>
+        {% block custom_footer %}{% endblock %}
+    </body>
+</html>

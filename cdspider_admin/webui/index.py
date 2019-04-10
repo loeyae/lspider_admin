@@ -1,0 +1,183 @@
+#-*- coding: utf-8 -*-
+# Licensed under the Apache License, Version 2.0 (the "License"),
+# see LICENSE for more details: http://www.apache.org/licenses/LICENSE-2.0.
+
+"""
+:author:  Zhang Yi <loeyae@gmail.com>
+:date:    2019-04-09 23:19
+"""
+
+import sys
+import time
+import socket
+import re
+import cgi
+import traceback
+from urllib.parse import urljoin
+from six import iteritems, itervalues
+from flask import render_template, request, json
+
+try:
+    import flask_login as login
+except ImportError:
+    from flask.ext import login
+
+from .app import app
+from .utils.form_data_format import build_site_data
+from cdspider.libs.utils import dictjoin, get_current_month_days, __redirection__
+
+index_fields = ['pid', 'type', 'status', 'comments', 'rate', 'updatetime']
+
+
+@app.route('/', methods=['GET'])
+def index():
+    projectdb = app.config.get("projectdb")
+    sitedb = app.config.get("sitedb")
+    urlsdb = app.config.get("urlsdb")
+    attachmentdb = app.config.get("attachmentdb")
+    keywordsdb = app.config.get("keywordsdb")
+    resultdb = app.config.get("resultdb")
+    ctime = int(time.time())
+#    aggregate = resultdb.aggregate_by_day(ctime, where = {"status": 1})
+
+    aggregate = {}
+    aggregate = dict((item['day'], item['count']) for item in aggregate)
+    app.logger.debug("aggregate from db: %s" % aggregate)
+    days = range(1, int(get_current_month_days()) +1)
+    days = [str(i) if len(str(i)) > 1 else "0%s" %i for i in days]
+    aggregate_by_day = dict.fromkeys(days, 0)
+    app.logger.debug("aggregate from default: %s" % aggregate_by_day)
+    aggregate_by_day.update(aggregate)
+    app.logger.debug("aggregate from db union default: %s" % aggregate_by_day)
+    count = {
+        "project": projectdb.get_count() if projectdb else 0,
+        "site": sitedb.count(where={}) if sitedb else 0,
+        "urls": urlsdb.count(where={}) if urlsdb else 0,
+        "attachment": attachmentdb.count(where={}) if attachmentdb else 0,
+        "keywords": keywordsdb.count(where={}) if keywordsdb else 0,
+        "result": resultdb.get_count(ctime, {'status': resultdb.RESULT_STATUS_PARSED}) if resultdb else 0,
+        "queues": get_queues(),
+        "aggregate_by_day": [i for k, i in sorted(aggregate_by_day.items())]
+    }
+    app.logger.debug("aggregate sored: %s" % count['aggregate_by_day'])
+    queue_setting = app.config.get('queue_setting')
+    queue_maxsize = int(queue_setting.get('maxsize')) or 100
+    queues = app.config.get('app_config', {}).get("queues", {})
+    return render_template("index.html", count=count, queues=queues, queue_maxsize = queue_maxsize, days = days)
+
+def get_queues():
+    def try_get_qsize(queue):
+        if queue is None:
+            return 'None'
+        try:
+            return queue.qsize()
+        except Exception as e:
+            return "%r" % e
+
+    result = {}
+    queues = app.config.get('queues', {})
+    for key in queues:
+        result[key] = try_get_qsize(queues[key])
+    return result
+
+@app.route('/queues', methods=['GET',])
+def queues():
+    import random
+    try:
+        result = get_queues()
+        return json.dumps({"status":200, "message": "Ok", "data": result}), 200, {'Content-Type': 'application/json'}
+    except:
+        return json.dumps({"status":500, "message": "获取队列数据失败！"}), 200, {'Content-Type': 'application/json'}
+
+@app.route('/run', methods=['POST',])
+def runtask():
+    r_obj=__redirection__()
+    sys.stdout=r_obj
+
+    fetch = app.config.get('fetch')
+    gtask = app.config.get('task')
+    if fetch is None or gtask is None:
+        return json.dumps({})
+
+    data = request.form.to_dict()
+    dmode = data.pop('dmode', 'list')
+    task = {
+            "mode": dmode,
+            "status": 1,
+            "projectid": int(data['projectid']),
+            "siteid": int(data['siteid']),
+            "save": {}
+        }
+    if "url" in data and data['url']:
+        task['save']['base_url'] = data['url']
+    urlsid = int(data.get('urlid', 0))
+    if urlsid:
+        task.update({
+            "urlid": urlsid,
+            })
+    attachid = int(data.get('attachid', 0))
+    if attachid:
+        task.update({
+            "atid": attachid,
+            })
+    keywordsid = int(data.get('keywordid', 0))
+    if keywordsid:
+        task.update({'kwid': keywordsid})
+
+    try:
+        task = gtask(({'pid': task['projectid']}, task))
+        if 'save' in data:
+            save = json.loads(data['save'])
+            if 'incr_data' in save:
+                for i in range(len(save['incr_data'])):
+                    save['incr_data'][i]['first'] = False
+                task['save']['incr_data'] = save['incr_data']
+
+        if 'attachment' in task and task['attachment']:
+#            task['attachment']['main_process']['actions']['crawl']['url'] = data['url']
+            task['url'] = data['url']
+        else:
+            task['url'] = task.get('urls', {}).get('url', task.get('site', {}).get('url'))
+        ret = list(fetch(task))
+        if ret[0] and 'list' in ret[0]:
+            for item in ret[0]['list']:
+                if 'url' in item:
+                    item['url'] = urljoin(task['save']['base_url'], item['url'])
+        elif ret[0] and 'item' in ret[0]:
+            for k in ret[0]:
+                item = ret[0][k]
+                if isinstance(item, dict):
+                    if k != 'item':
+                        item.pop('title', None)
+                        item.pop('created', None)
+                        item.pop('author', None)
+                        item.pop('content', None)
+                        item.pop('raw_content', None)
+                    item.pop('raw_title', None)
+                for _k in item:
+                    if isinstance(item[_k], str):
+                        item[_k] = cgi.escape(item[_k])
+                    else:
+                        item[_k] = json.dumps(item[_k])
+
+        if ret[1]:
+            ret[1] = re.sub('[\r\n]+', '<br />', '\r\n'.join(ret[1]) if isinstance(ret[1], (list, tuple)) else str(ret[1]))
+        if ret[4]:
+            ret[4] = json.dumps(ret[4])
+    except socket.error as e:
+        app.logger.warning('connect to fetcher rpc error: %r', e)
+        return json.dumps({"result": None, "status": 500, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
+    except:
+        app.logger.warning('fetcher error: %r', traceback.format_exc())
+        return json.dumps({"result": (None, traceback.format_exc(), None, None, None), "status": 500, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": ret, "status": 200, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
+
+
+@app.route('/robots.txt')
+def robots():
+    return """User-agent: *
+Disallow: /
+Allow: /$
+Allow: /debug
+Disallow: /debug/*?taskid=*
+""", 200, {'Content-Type': 'text/plain'}

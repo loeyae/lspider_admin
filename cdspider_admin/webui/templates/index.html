@@ -1,0 +1,158 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!-- nav -->
+<!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                    <li class="active"><i class="icon-home"></i>首页</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        概览
+                    </header>
+                    <section class="panel-content">
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-building"></i></a>
+                                <div class="h4">项目</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['project'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-tags"></i></a>
+                                <div class="h4">关键词</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['keywords'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-cloud"></i></a>
+                                <div class="h4">站点</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['site'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-link"></i></a>
+                                <div class="h4">URLS</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['urls'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-link"></i></a>
+                                <div class="h4">附加任务</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['attachment'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="col-lg-2">
+                            <section class="text-center">
+                                <a href="/project/list" class="btn btn-primary btn-circle active"><i class="icon-save"></i></a>
+                                <div class="h4">当月数据</div>
+                                <div class="line m-l m-r"></div>
+                                <h4 class="text-success"><strong>{{ count['result'] }}</strong></h4>
+                            </section>
+                        </div>
+                        <div class="clearfix"></div>
+                    </section>
+                </section>
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+                    <header class="panel-heading">
+                        任务队列状态
+                    </header>
+                    <section class="panel-content">
+                        <!-- easypiechart -->
+                        {% for key, name in queues.items()|sort %}
+                        <div style="min-width:150px; width: 14%; float: left;">
+                            <section>
+                                <header class="panel-heading bg-white">
+                                    <div class="text-center h5">{{ name }}</div>
+                                </header>
+                                <div class="pull-in text-center">
+                                    <div class="inline">
+                                        <div class="easypiechart" data-percent="{{ (count.get("queues", {}).get(key, 0)/queue_maxsize * 100)|round(1, 'floor') }}" {% if loop.first %}data-loop="true"{% endif %} data-key="{{ key }}" data-callback="updateQueues">
+                                             <span class="h2">{{ count.get("queues", {}).get(key, 0) }}</span>
+                                            {% if loop.first %}
+                                            <div class="easypie-text"><button class="btn btn-link m-t-n-small" data-toggle="class:pie"><i class="icon-play text-active text-muted"></i><i class="icon-pause text text-muted"></i></button></div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                        {% endfor %}
+                        <!-- easypiechart end-->
+                        <div class="clearfix"></div>
+                    </section>
+                </section>
+            </div>
+            <div class="col-lg-6">
+                <section class="panel">
+                    <header class="panel-heading">
+                        本月数据
+                    </header>
+                    <div class="sparkline" data-type="line" data-resize="true" data-height="200" data-width="100%" data-line-color="#bfea5f" data-fill-color="#f3fce3" data-highlight-line-color="#e1e5e9" data-spot-radius="5" data-composite-data="[{{ count['aggregate_by_day']|join(',') }}]" data-composite-line-color="#a3e2fe" data-composite-fill-color="#e3f6ff"></div>
+                    <ul class="list-inline text-muted axis">{% for i in days %}<li>{{ i }}</li>{% endfor %}</ul>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/charts/sparkline/jquery.sparkline.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/charts/easypiechart/jquery.easy-pie-chart.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ie/excanvas.js') }}"></script>
+<script>
+var maxsize = {{ queue_maxsize }};
+var updateQueues = function(el)
+{
+    $.ajax({
+        type: "get",
+        dataType: "json",
+        url: '/queues',
+        success: function(result){
+            if (result.status == 200){
+                for (var key in result.data) {
+                    var $this = $("[data-key=" + key + "]"),
+                    $text = $('span', $this),
+                    $oldValue = $text.html(),
+                    $count = result.data[key],
+                    $newValue = Math.round(100 * $count / maxsize);
+                    $this.data('easyPieChart').update($newValue);
+                    $text.html($count)
+                }
+            } else {
+                alert(result.message);
+                return false;
+            }
+        },
+        error: function(){
+            alert('请求失败。');
+            return false;
+        }
+    })
+}
+</script>
+{% endblock %}
