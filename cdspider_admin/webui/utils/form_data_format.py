@@ -434,29 +434,33 @@ def build_form_data(data):
             data['parse']['title'] = title_rule.get('filter', '')
             data['parse']['title_extract'] = title_rule.get('extract', '')
         else:
-            data['parse']['title'] = parser.get('title', {}).get('filter', '')
-            data['parse']['title_extract'] = parser.get('title', {}).get('extract', '')
+            title_rule = parser.pop('title', {})
+            data['parse']['title'] = title_rule.get('filter', '')
+            data['parse']['title_extract'] = title_rule.get('extract', '')
         if 'item' in parser and "url" in parser['item']:
             url_rule = parser['item'].pop('url', {})
             data['parse']['url'] = url_rule.get('filter', '')
             data['parse']['url_patch'] = url_rule.get('patch', '')
         else:
-            data['parse']['content'] = parser.get('content', {}).get('filter', '')
-            data['parse']['content_extract'] = parser.get('content', {}).get('extract', '')
+            content_rule = parser.pop('content', {})
+            data['parse']['content'] = content_rule.get('filter', '')
+            data['parse']['content_extract'] = content_rule.get('extract', '')
         if 'item' in parser and 'author' in parser['item']:
             author_rule = parser['item'].pop('author', {})
             data['parse']['author'] = author_rule.get('filter', '')
             data['parse']['author_extract'] = author_rule.get('extract', '')
         else:
-            data['parse']['author'] = parser.get('author', {}).get('filter', '')
-            data['parse']['author_extract'] = parser.get('author', {}).get('extract', '')
+            author_rule = parser.pop('author', {})
+            data['parse']['author'] = author_rule.get('filter', '')
+            data['parse']['author_extract'] = author_rule.get('extract', '')
         if 'item' in parser and 'pubtime' in parser['item']:
             pubtime_rule = parser['item'].pop('pubtime', {})
             data['parse']['pubtime'] = pubtime_rule.get('filter', '')
             data['parse']['pubtime_extract'] = pubtime_rule.get('extract', '')
         else:
-            data['parse']['pubtime'] = parser.get('pubtime', {}).get('filter', '')
-            data['parse']['pubtime_extract'] = parser.get('pubtime', {}).get('extract', '')
+            pubtime_rule = parser.pop('pubtime', {})
+            data['parse']['pubtime'] = pubtime_rule.get('filter', '')
+            data['parse']['pubtime_extract'] = pubtime_rule.get('extract', '')
 
         data['parse']['other'] = {}
         if 'item' in parser and parser['item']:
