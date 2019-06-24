@@ -25,6 +25,7 @@
                         <div class="col-lg-6 m-b-mini">
                             <select class="input-small inline" id="urls-oparate">
                                 <option value="default">批量操作</option>
+                                <option value="active-rule">规则通过</option>
                                 <option value="active">激活</option>
                                 <option value="disable">禁用</option>
                                 <option value="delete">删除</option>
@@ -79,6 +80,9 @@
                                                data-uid="{{ item['uuid'] }}" value="当月数据"/>
                                         <input class="btn btn-default btn-small" name="urls-edit" type="button"
                                                data-uid="{{ item['uuid'] }}" value="编辑"/>
+                                        <input class="btn btn-default btn-small" name="urls-active-rule" type="button"
+                                               data-uid="{{ item['uuid'] }}" value="规则通过"
+                                               {% if item['ruleStatus'] == 1 %}disabled{% endif %}/>
                                         <input class="btn btn-default btn-small" name="urls-active" type="button"
                                                data-uid="{{ item['uuid'] }}" value="激活"
                                                {% if app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
@@ -122,6 +126,20 @@ $(function(){
         $.ajax({
             type: 'get',
             url: '/urls/'+ $(this).data('uid') +'/active',
+            dataType: 'json',
+            success: function(result){
+                if (result.status == 200) {
+                    location.reload();
+                } else {
+                    alert(result.message)
+                }
+            },
+        });
+    })
+    $("[name=urls-active-rule]").click(function() {
+        $.ajax({
+            type: 'get',
+            url: '/urls/'+ $(this).data('uid') +'/active/rule',
             dataType: 'json',
             success: function(result){
                 if (result.status == 200) {
@@ -178,6 +196,24 @@ $(function(){
             return $(this).val()
         }).get().join(',')
         switch (val){
+            case 'active-rule':
+                $.ajax({
+                    type: 'post',
+                    url: '/urls/active/rule',
+                    dataType: 'json',
+                    data: {"id": data, "tid": tid},
+                    success: function(result){
+                        if (result.status == 400) {
+                                $("#urls-oparate").val('default')
+                        } else if (result.status == 200) {
+                            location.reload();
+                        } else {
+                            alert(result.message)
+                            $("#urls-oparate").val('default')
+                        }
+                    },
+                });
+                return true
             case 'active':
                 $.ajax({
                     type: 'post',
