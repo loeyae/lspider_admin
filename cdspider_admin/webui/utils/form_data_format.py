@@ -426,7 +426,7 @@ def build_form_data(data):
     if not 'url' in data or not data['url']:
         data['url'] = {}
     if 'parse' in data and data['parse']:
-        parser = data['parse']
+        parser = data.pop('parse', {})
         data['parse'] = {}
         data['parse']['filter'] = parser.get('filter', '')
         if 'item' in parser and 'title' in parser['item']:
