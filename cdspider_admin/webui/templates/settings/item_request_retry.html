@@ -4,7 +4,7 @@
 <div class="form-group">
     <label class="col-lg-2 control-label">URL匹配规则</label>
     <div class="col-lg-9">
-        <input type="text" name="item-retry-url" placeholder="" class="input-small form-control"
+        <input type="text" name="item-validate-url" placeholder="" class="input-small form-control"
                value="{{ rule.get("validate", {}).get('url', '') }}"/>
     </div>
 </div>
@@ -23,7 +23,7 @@
                 <li data-value="@json:"><a href="#">JSON表达式</a></li>
             </ul>
         </div>
-        <input type="text" name="item-retry-filter" placeholder="" class="input-small form-control"
+        <input type="text" name="item-validate-filter" placeholder="" class="input-small form-control"
                value="{{ rule.get("validate", {}).get('filter', '') }}"/>
     </div>
 </div>
