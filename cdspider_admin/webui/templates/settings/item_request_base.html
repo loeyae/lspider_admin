@@ -14,9 +14,9 @@
     <label class="col-lg-2 control-label">是否使用代理</label>
     <div class="col-lg-9">
         <select id="item-request-proxy" class="form-control" name="item-request-proxy">
-            <option value="none" {% if rule.get("request", {}).get('actions', {}).get('crawl', {}).get('proxy', 'none') == 'none' %} selected {% endif %}>从不</option>
-            <option value="auto" {% if rule.get("request", {}).get('actions', {}).get('crawl', {}).get('proxy', 'none') == 'auto' %} selected {% endif %}>自动</option>
-            <option value="force" {% if rule.get("request", {}).get('actions', {}).get('crawl', {}).get('proxy', 'none') == 'force' %} selected {% endif %}>强制</option>
+            <option value="none" {% if rule.get("request", {}).get('proxy', 'none') == 'none' %} selected {% endif %}>从不</option>
+            <option value="auto" {% if rule.get("request", {}).get('proxy', 'none') == 'auto' %} selected {% endif %}>自动</option>
+            <option value="force" {% if rule.get("request", {}).get('proxy', 'none') == 'force' %} selected {% endif %}>强制</option>
         </select>
     </div>
 </div>
@@ -24,8 +24,8 @@
     <label class="col-lg-2 control-label">请求方式</label>
     <div class="col-lg-9">
         <select id="item-request-method" class="form-control" name="item-request-method">
-            <option value="GET" {% if rule.get("request", {}).get('actions', {}).get('crawl', {}).get('method') == 'GET' %} selected {% endif %}>GET</option>
-            <option value="POST" {% if rule.get("request", {}).get('actions', {}).get('crawl', {}).get('method') == 'POST' %} selected {% endif %}>POST</option>
+            <option value="GET" {% if rule.get("request", {}).get('method') == 'GET' %} selected {% endif %}>GET</option>
+            <option value="POST" {% if rule.get("request", {}).get('method') == 'POST' %} selected {% endif %}>POST</option>
         </select>
     </div>
 </div>
