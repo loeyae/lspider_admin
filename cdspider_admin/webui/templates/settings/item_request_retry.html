@@ -4,7 +4,8 @@
 <div class="form-group">
     <label class="col-lg-2 control-label">URL匹配规则</label>
     <div class="col-lg-9">
-        <textarea name="item-retry-url" placeholder="以正则书写，如：[url]\?.*" class="form-control">{{ rule.get('retry', {}).get('url', '') }}</textarea>
+        <input type="text" name="item-retry-url" placeholder="" class="input-small form-control"
+               value="{{ rule.get("validate", {}).get('url', '') }}"/>
     </div>
 </div>
 <div class="form-group">
@@ -23,6 +24,6 @@
             </ul>
         </div>
         <input type="text" name="item-retry-filter" placeholder="" class="input-small form-control"
-               value="{{ rule.get("retry", {}).get('filter', '') }}"/>
+               value="{{ rule.get("validate", {}).get('filter', '') }}"/>
     </div>
 </div>
