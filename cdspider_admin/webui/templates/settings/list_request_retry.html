@@ -1,10 +1,10 @@
 <div class="col-lg-12">
-    <h5>重请求设置</h5>
+    <h5>请求失败验证规则</h5>
 </div>
 <div class="form-group">
     <label class="col-lg-2 control-label">URL匹配规则</label>
     <div class="col-lg-9">
-        <textarea name="list-retry-url" placeholder="以正则书写，如：[url]\?.*" class="form-control">{{ rule.get('retry', {}).get('url', '') }}</textarea>
+        <textarea name="list-validate-url" placeholder="以正则书写，如：[url]\?.*" class="form-control">{{ rule.get('validate', {}).get('url', '') }}</textarea>
     </div>
 </div>
 <div class="form-group">
@@ -22,7 +22,7 @@
                 <li data-value="@json:"><a href="#">JSON表达式</a></li>
             </ul>
         </div>
-        <input type="text" name="list-retry-filter" placeholder="" class="input-small form-control"
-               value="{{ rule.get("retry", {}).get('filter', '') }}"/>
+        <input type="text" name="list-validate-filter" placeholder="" class="input-small form-control"
+               value="{{ rule.get("validate", {}).get('filter', '') }}"/>
     </div>
 </div>
