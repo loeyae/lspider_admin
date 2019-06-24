@@ -336,6 +336,7 @@ $(document).ready(function() {
                     var k = s[0];
                     var v = s[1] ? s[1] : '自定义字段';
                     _html += '<div class="form-group" id="'+ $column +'-column-'+ k +'">'+
+                            '<input type="hidden" name="'+ $column +'-name-'+ k +'" value="'+ v +'" />'+
                             '<label class="col-lg-2 control-label">'+ v +'识别规则</label>'+
                             '<div class="col-lg-9 input-group dropdown combobox m-b">'+
                                 '<div class="input-group-btn">'+
@@ -349,7 +350,6 @@ $(document).ready(function() {
                                      '</ul>'+
                                 '</div>'+
                                 '<input type="text" name="'+ $column +'-'+ k +'" placeholder="" class="form-control" />'+
-                                '<input type="hidden" name="'+ $column +'-name-'+ k +'" value="'+ v +'" />'+
                                 '<span class="input-group-btn"><a href="#'+ $column +'-column-'+ k +'" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>'+
                             '</div>'+
                             '<label class="col-lg-2 control-label">'+ v +'提取规则</label>'+
