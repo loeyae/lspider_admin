@@ -15,7 +15,8 @@
 <div id="list-parser-columns">
     {% if rule.get('parse', {}).get('other') %}
     {% for k,v in rule.get('parse', {}).get('other').items() %}
-    <div class="form-group" id="pre-parse-other-column-{{ k }}">
+    <div class="form-group" id="list-parse-other-column-{{ k }}">
+        <input type="hidden" name="list-parse-other-name-{{ k }}" value="{{ v['name'] }}" />
         <label class="col-lg-2 control-label">{{ v['name'] }}识别规则</label>
         <div class="col-lg-9 input-group dropdown combobox m-b">
             <div class="input-group-btn">
@@ -29,14 +30,13 @@
                     <li data-value="@json:"><a href="#">JSON表达式</a></li>
                 </ul>
             </div>
-            <input type="text" name="pre-parse-other-{{ k }}" placeholder="" class="input-small form-control" value="{{ v['filter'] }}" />
+            <input type="text" name="list-parse-other-{{ k }}" placeholder="" class="input-small form-control" value="{{ v['filter'] }}" />
 
-            <input type="hidden" name="pre-parse-other-name-{{ k }}" value="{{ v['name'] }}" />
-            <span class="input-group-btn"><a href="#pre-column-{{ k }}" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>
+            <span class="input-group-btn"><a href="#list-parse-other-column-{{ k }}" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>
         </div>
         <label class="col-lg-2 control-label">{{ v['name'] }}提取规则</label>
         <div class="col-lg-9 input-group">
-            <input type="text" name="pre-parse-other-{{ k }}-extract" placeholder=""
+            <input type="text" name="list-parse-other-{{ k }}-extract" placeholder=""
                    class="input-small form-control" value="{{ v['extract'] }}" />
         </div>
     </div>
