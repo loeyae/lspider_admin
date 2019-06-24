@@ -155,6 +155,13 @@ def build_paging_data(data, formdata, prefix):
 def build_base_data(formdata):
     return formdata
 
+def build_retry_data(formdata, prefix):
+    return {
+        "url": formdata.get("%s-url" % prefix, ''),
+        "filter": formdata.get("%s-filter" % prefix, ''),
+    }
+
+
 def build_list_data(formdata):
     data = {
         "request": {
@@ -250,6 +257,7 @@ def build_list_data(formdata):
     list_url_parse = build_parse_other(formdata, 'list-url-parse-')
     if list_url_parse:
         data['url']['parse'] = list_url_parse
+    data['retry'] = build_retry_data(formdata, 'list-retry')
     data['unique'] = build_unique_data(formdata)
     return data
 
@@ -306,6 +314,7 @@ def build_item_data(formdata):
     other_parse = build_parse_other(formdata, 'item-parse-other-')
     if other_parse:
         data['parse'].update(other_parse)
+    data['retry'] = build_retry_data(formdata, 'item-retry')
     return data
 
 def build_script_data(formdata):
