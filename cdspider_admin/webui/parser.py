@@ -73,12 +73,6 @@ def parser_upd(id):
     if request.method=='GET':
         app_config = app.config.get('app_config')
         parser_info = parserdb_obj.get_detail(id)
-        if parser_info['parse']:
-            other = {}
-            for k, v in parser_info['parse'].items():
-                if k not in ("title", "author", "content", "created"):
-                    other.update({k: v})
-            parser_info['parse']['other'] = other
         return render_template('/parser/update.html', rule=build_form_data(parser_info), id=id, app_config=app_config)
     else:
         try:
