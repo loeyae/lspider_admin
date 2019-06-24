@@ -62,7 +62,8 @@ def urls_add():
                     'sid': task_info['sid'],
                     'tid': int(tid),
                     'ruleId': int(ruleId),
-                    'frequency': frequency
+                    'frequency': frequency,
+                    'ruleStatus': urls_obj.STATUS_INIT,
                 }
                 uid = urls_obj.insert(dic)
                 if uid:
@@ -138,7 +139,7 @@ def urls_list_enable():
         url_list = urls_obj.get_list(where={'uid': arr, 'status': urls_obj.STATUS_DISABLE, 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
-            ret=urls_obj.enable(item['uid'])
+            ret=urls_obj.enable(item['uuid'])
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -182,10 +183,10 @@ def urls_list_delete():
         url_list = urls_obj.get_list(where={'uid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE, urls_obj.STATUS_DISABLE], 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
-            ret=urls_obj.delete(item['uid'])
+            ret=urls_obj.delete(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'uid': item['uid'],  'mode': task_info['type'], "status": urls_obj.STATUS_DELETED})
+                    {'uid': item['uuid'],  'mode': task_info['type'], "status": urls_obj.STATUS_DELETED})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -229,10 +230,10 @@ def urls_list_disable():
         url_list = urls_obj.get_list(where={'uid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE], 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
-            ret=urls_obj.disable(item['uid'])
+            ret=urls_obj.disable(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'urlid': item['uid'], 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
+                    {'urlid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -240,6 +241,46 @@ def urls_list_disable():
     except Exception as e:
         app.logger.error(traceback.format_exc())
         return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
+@app.route('/urls/<int:id>/active/rule', methods=['GET'])
+def urls_active_rule(id):
+    try:
+        urls_obj = app.config.get('db')["UrlsDB"]
+        urls_info = urls_obj.get_detail(id)
+        if not id or not urls_info:
+            return jsonify({"status": 500, "message": "无效的URL", "error": "error"})
+        rule_obj = app.config.get('db')["ListRuleDB"]
+        rule_info = rule_obj.get_detail(id)
+        if not id or not rule_info:
+            return jsonify({"status": 500, "message": "无效的规则", "error": "error"})
+        if rule_info['ruleStatus'] != rule_obj.STATUS_ACTIVE:
+            return jsonify({"status": 500, "message": "请先激活规则", "error": "error"})
+        ret=urls_obj.active_rule(id)
+    except Exception as e:
+        app.logger.error(traceback.format_exc())
+        return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
+@app.route('/urls/active/rule', methods=['POST'])
+def urls_list_active_rule():
+    try:
+        ids = request.form.get('id')
+        if not ids:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        arr = ids.split(',')
+        arr = [int(k) for k in arr]
+        urls_obj = app.config.get('db')["UrlsDB"]
+        url_list = urls_obj.get_list(where={'uid': arr, 'ruleStatus': urls_obj.STATUS_INIT})
+        i = 0
+        for item in iterator2list(url_list):
+            ret=urls_obj.active_rule(item['uuid'])
+            i += 1
+        if i == 0:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        return jsonify({"status": 200, "message": "Ok", "data": {"id": ids}})
+    except Exception as e:
+        app.logger.error(traceback.format_exc())
+        return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
 
 @app.route('/urls/<int:id>/active', methods=['GET'])
 def urls_active(id):
@@ -254,6 +295,8 @@ def urls_active(id):
             return jsonify({"status": 500, "message": "无效的任务", "error": "error"})
         if task_info['status'] != task_obj.STATUS_ACTIVE:
             return jsonify({"status": 500, "message": "请先激活任务", "error": "error"})
+        if urls_info['ruleStatus'] != urls_obj.STATUS_ACTIVE:
+            return jsonify({"status": 500, "message": "规则未验证通过", "error": "error"})
         ret=urls_obj.active(id)
         if ret:
             app.config['status'](
@@ -279,13 +322,13 @@ def urls_list_active():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
-        url_list = urls_obj.get_list(where={'uid': arr, 'status': urls_obj.STATUS_INIT, 'tid': int(tid)})
+        url_list = urls_obj.get_list(where={'uid': arr, 'status': urls_obj.STATUS_INIT, 'ruleStatus': urls_obj.STATUS_ACTIVE, 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
-            ret=urls_obj.active(item['uid'])
+            ret=urls_obj.active(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'urlid': item['uid'], 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
+                    {'urlid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
