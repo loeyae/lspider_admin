@@ -205,3 +205,10 @@ def utility_processor():
     def format_paging_url(url, page):
         return utils.build_query(url, "page=%s" % page)
     return dict(format_paging_url=format_paging_url)
+
+@app.template_filter()
+def time_func(ti):
+    import time
+    # ti=1516954700
+    t=time.localtime(ti)
+    return time.strftime('%Y-%m-%d %H:%M:%S',t)

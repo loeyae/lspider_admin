@@ -1,10 +1,8 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Licensed under the Apache License, Version 2.0 (the "License"),
 # see LICENSE for more details: http://www.apache.org/licenses/LICENSE-2.0.
 
 """
 :author:  Zhang Yi <loeyae@gmail.com>
-:date:    2019/4/9 23:27
+:date:    2019/6/20 15:23
 """
-
-from . import app, login, index, project, site, task, urls, rule, parser

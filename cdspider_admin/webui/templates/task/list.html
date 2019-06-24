@@ -1,0 +1,270 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+
+
+  <!-- / nav -->
+
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+            <h4><i class="icon-table"></i>任务列表</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                  <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                  <li><a href="/project/list"><i class="icon-list-ul"></i>项目</a></li>
+                  <li><a href="/site/list?pid={{ site_info['pid'] }}"><i class="icon-list-ul"></i>站点</a></li>
+                  <li class="active">任务</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+
+                    <div class="row text-small">
+                        <div class="col-lg-6 m-b-mini">
+                            {% if pid %}
+                            <select class="input-small inline" id="task-oparate">
+                                <option value="default">批量操作</option>
+                                <option value="active">激活</option>
+                                <option value="disable">禁用</option>
+                                <option value="delete">删除</option>
+                            </select>
+                            <a href="/task/dis?sid={{ sid }}"><i class="icon-minus-sign"></i>已禁用任务</a>
+                            {% endif %}
+                        </div>
+                        {% if sid %}
+                        <div class="col-lg-6 m-b-mini text-right">
+                            <button class="btn btn-default btn-small" id="create-task">创建新任务</button>
+                            <input type="hidden" name="sid" id="siteid" value="{{ sid }}" />
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="pull-out m-t-small">
+                        <table class="table table-striped b-t text-small">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th class="th-sortable" data-toggle="class">任务id
+                                        <span class="th-sort">
+                                            <i class="icon-sort-down text"></i>
+                                            <i class="icon-sort-up text-active"></i>
+                                            <i class="icon-sort"></i>
+                                        </span>
+                                    </th>
+                                    <th>名称</th>
+                                    <th>状态</th>
+                                    <th>更新频次</th>
+                                    <th>类型</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for item in task_list %}
+                                <tr>
+                                    <td
+                                    ><input type="checkbox" name="id" class="checkbox" value="{{ item['uuid'] }}"></td>
+                                    <td >{{ item['uuid'] }}</td>
+                                    <td style="max-width:100px;word-wrap:break-word;word-break:break-all;">{{ item['name'] }}</td>
+                                    <td>
+                                        {{ app_config.get('status', {}).get(str(item['status']), "初始化") }}
+                                    </td>
+                                    <td>
+                                        {{ app_config.get('frequencymap', {}).get(str(item['frequency']), [7200, "每2小时一次"])[1] }}
+                                    </td>
+                                    <td>
+                                        {{ app_config.get('tasktype', {}).get(item['type']) }}
+                                    </td>
+                                    <td>{{ item['ctime']|time_func }}</td>
+                                    <td >
+                                        <input class="btn btn-default btn-small" name="urls-list" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid']}}"
+                                               value="URL列表" />
+                                        <input class="btn btn-default btn-small" name="rule-list" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid']}}"
+                                               value="规则列表" />
+                                        <input class="btn btn-default btn-small" name="result-list" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid'] }}"
+                                               value="当月数据" />
+                                        <input class="btn btn-default btn-small" name="task-edit" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid'] }}"
+                                               value="编辑"/>
+                                        <input class="btn btn-default btn-small" name="task-active" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid'] }}"
+                                               value="激活" {% if app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
+                                        <select class="input-small inline" name="task-oparate"
+                                                data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid'] }}">
+                                            <option value="default">更多操作</option>
+                                            <option value="disable">禁用</option>
+                                            <option value="delete">删除</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <footer class="panel-footer dataTables_wrapper">
+                        {% include 'paging.html' %}
+                    </footer>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/datatables/jquery.dataTables.min.js') }}"></script>
+<script type="text/javascript">
+$(function(){
+    $("[name=urls-list]").click(function(){
+        window.location.href = '/urls/list?tid=' + $(this).data('tid')
+    })
+    $("[name=rule-list]").click(function(){
+        window.location.href = '/rule/list?tid=' + $(this).data('tid')
+    })
+    $("[name=result-list]").click(function(){
+        window.location.href = '/result/list?tid='+ $(this).data('tid')
+    })
+    $("#create-task").click(function() {
+        window.location.href = '/task/add?sid={{ sid }}'
+    })
+    $("[name=task-edit]").click(function() {
+        window.location.href = '/task/' + $(this).data('tid') + '/edit'
+    })
+    $("[name=task-active]").click(function() {
+        $.ajax({
+            type: 'get',
+            url: '/task/'+ $(this).data('tid') +'/active',
+            dataType: 'json',
+            success: function(result){
+                if (result.status == 200) {
+                    location.reload();
+                } else {
+                    alert(result.message)
+                }
+            },
+        });
+    })
+    $("[name=task-oparate]").change(function(){
+        var val = $(this).val()
+        switch (val){
+            case 'disable':
+                if (confirm("禁用任务将会禁用该任务下所有的URL及相关任务,是否确认禁用?")) {
+                    $.ajax({
+                        type: 'get',
+                        url: '/task/'+ $(this).data('tid') +'/disable',
+                        dataType: 'json',
+                        success: function(result){
+                            if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("[name=task-oparate]").val('default')
+                            }
+                        },
+                    });
+                }
+                return false
+            case 'delete':
+                if (confirm("删除任务将会删除该任务下所有的URL及相关任务,是否确认删除?")) {
+                    $.ajax({
+                        type: 'get',
+                        url: '/task/'+ $(this).data('tid') +'/delete',
+                        dataType: 'json',
+                        success: function(result){
+                            if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("[name=task-oparate]").val('default')
+                            }
+                        },
+                    });
+                }
+                return false
+            default:
+                return true;
+        }
+    })
+    $("#task-oparate").change(function(){
+        var val = $(this).val()
+        var sid = $(this).data('sid')
+        var data = $(":checked[name=id]").map(function(){
+            return $(this).val()
+        }).get().join(',')
+        switch (val){
+            case 'active':
+                $.ajax({
+                    type: 'post',
+                    url: '/task/active',
+                    dataType: 'json',
+                    data: {"id": data, "sid": sid},
+                    success: function(result){
+                        if (result.status == 400) {
+                                $("#task-oparate").val('default')
+                        } else if (result.status == 200) {
+                            location.reload();
+                        } else {
+                            alert(result.message)
+                            $("#task-oparate").val('default')
+                        }
+                    },
+                });
+                return true
+            case 'disable':
+                if (confirm("禁用任务将会禁用选中任务下所有的URL及相关任务,是否确认禁用?")) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/task/disable',
+                        dataType: 'json',
+                        data: {"id": data, "sid": sid},
+                        success: function(result){
+                            if (result.status == 400) {
+                                $("#task-oparate").val('default')
+                            } else if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("#task-oparate").val('default')
+                            }
+                        },
+                    });
+                    return true;
+                }
+                return false;
+            case 'delete':
+                if (confirm("删除任务将会删除选中任务下所有的URL及相关任务,是否确认删除?")) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/task/delete',
+                        dataType: 'json',
+                        data: {"id": data, "sid": sid},
+                        success: function(result){
+                            if (result.status == 400) {
+                                $("#task-oparate").val('default')
+                            } else if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("#task-oparate").val('default')
+                            }
+                        },
+                    });
+                    return true;
+                }
+                return false;
+            default:
+                return true;
+        }
+    })
+})
+</script>
+{% endblock %}

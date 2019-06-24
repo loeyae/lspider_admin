@@ -1,0 +1,238 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!-- / header -->
+<!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+            <h4><i class="icon-table"></i>详情解析规则列表</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                  <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                  <li class="active">详情解析规则</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+
+                    <div class="row text-small">
+                        <div class="col-lg-6 m-b-mini">
+                            <select class="input-small inline" id="parsers-oparate">
+                                <option value="default">批量操作</option>
+                                <option value="active">激活</option>
+                                <option value="disable">禁用</option>
+                            </select>
+                            <a href="/parser/dis"><i class="icon-minus-sign"></i>已禁用详情解析规则</a>
+                        </div>
+                        <div class="col-lg-6 m-b-mini text-right">
+                            <button class="btn btn-default btn-small" id="create-parsers">创建新详情解析规则</button>
+                        </div>
+                    </div>
+                    <div class="pull-out m-t-small">
+                        <table class="table table-striped b-t text-small">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th class="th-sortable" data-toggle="class">规则ID
+                                        <span class="th-sort">
+                                            <i class="icon-sort-down text"></i>
+                                            <i class="icon-sort-up text-active"></i>
+                                            <i class="icon-sort"></i>
+                                        </span>
+                                    </th>
+                                    <th>名称</th>
+                                    <th>域名</th>
+                                    <th>二级域名</th>
+                                    <th>URL匹配规则</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for item in parser_list %}
+                                <tr>
+                                    <td
+                                    ><input type="checkbox" name="id" class="checkbox" value="{{ item['uuid'] }}"></td>
+                                    <td >{{ item['uuid'] }}</td>
+                                    <td >{{ item['name'] }}</td>
+                                    <td >{{ item['domain'] }}</td>
+                                    <td >{{ item['subdomain'] }}</td>
+                                    <td>{{ item['pattern'] }}</td>
+                                    <td>
+                                        {{ app_config.get('status', {}).get(str(item['status']), '初始化') }}
+                                    </td>
+                                    <td>{{ item['ctime']|time_func }}</td>
+
+                                    <td >
+
+                                        <input class="btn btn-default btn-small" name="parsers-edit" type="button"
+                                               data-rid="{{  item['uuid'] }}" value="编辑"/>
+                                        <input class="btn btn-default btn-small" name="parsers-active" type="button"
+                                               data-rid="{{  item['uuid'] }}" value="激活" {% if
+                                               app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
+
+                                        <select class="input-small inline" name="parsers-oparate"
+                                                data-rid="{{  item['uuid'] }}">
+                                            <option value="default">更多操作</option>
+                                            <option value="disable">禁用</option>
+                                            <option value="delete">删除</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <footer class="panel-footer dataTables_wrapper">
+                        {% include 'paging.html' %}
+                    </footer>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/datatables/jquery.dataTables.min.js') }}"></script>
+<script>
+$(function(){
+    $("#create-parsers").click(function() {
+        window.location.href = '/parser/add'
+    })
+    $("[name=parsers-edit]").click(function() {
+        window.location.href = '/parser/' + $(this).data('rid') + '/edit'
+    })
+    $("[name=parsers-active]").click(function() {
+        $.ajax({
+            type: 'get',
+            url: '/parser/'+ $(this).data('rid') +'/active',
+            dataType: 'json',
+            success: function(result){
+                if (result.status == 200) {
+                    location.reload();
+                } else {
+                    alert(result.message)
+                }
+            },
+        });
+    })
+    $("[name=parsers-oparate]").change(function(){
+        var val = $(this).val()
+        switch (val){
+            case 'disable':
+                if (confirm("禁用详情解析规则将会禁用与该关键字关联的所有任务,是否确认禁用?")) {
+                    $.ajax({
+                    type: 'get',
+                        url: '/parser/'+ $(this).data('rid') +'/disable',
+                        dataType: 'json',
+                        success: function(result){
+                            if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                            }
+                        },
+                    });
+                }
+                return true
+            case 'delete':
+                if (confirm("删除详情解析规则将会删除与该关键字关联的所有任务,是否确认删除?")) {
+                    $.ajax({
+                        type: 'get',
+                        url: '/parser/'+ $(this).data('rid') +'/delete',
+                        dataType: 'json',
+                        success: function(result){
+                            if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                            }
+                        },
+                    });
+                }
+                return true
+            default:
+                return true;
+        }
+    })
+    $("#parsers-oparate").change(function(){
+        var val = $(this).val()
+        var data = $(":checked[name=id]").map(function(){
+            return $(this).val()
+        }).get().join(',')
+        switch (val){
+            case 'active':
+                $.ajax({
+                    type: 'post',
+                    url: '/parser/active',
+                    dataType: 'json',
+                    data: {"id": data},
+                    success: function(result){
+                        if (result.status == 400) {
+                                $("#parsers-oparate").val('default')
+                        } else if (result.status == 200) {
+                            location.reload();
+                        } else {
+                            alert(result.message)
+                            $("#parsers-oparate").val('default')
+                        }
+                    },
+                });
+                return true
+            case 'disable':
+                if (confirm("禁用详情解析规则将会禁用选中详情解析规则相关任务,是否确认禁用?")) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/parser/disable',
+                        dataType: 'json',
+                        data: {"id": data},
+                        success: function(result){
+                            if (result.status == 400) {
+                                $("#parsers-oparate").val('default')
+                            } else if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("#parsers-oparate").val('default')
+                            }
+                        },
+                    });
+                    return true
+                }
+                return false
+            case 'delete':
+                if (confirm("删除详情解析规则将会删除选中详情解析规则相关任务,是否确认删除?")) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/parser/delete',
+                        dataType: 'json',
+                        data: {"id": data},
+                        success: function(result){
+                            if (result.status == 400) {
+                                $("#parsers-oparate").val('default')
+                            } else if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("#parsers-oparate").val('default')
+                            }
+                        },
+                    });
+                    return true;
+                }
+                return false;
+            default:
+                return true;
+        }
+    })
+})
+</script>
+{% endblock %}

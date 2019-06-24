@@ -23,7 +23,6 @@ except ImportError:
     from flask.ext import login
 
 from .app import app
-from .utils.form_data_format import build_site_data
 from cdspider.libs.utils import dictjoin, get_current_month_days, __redirection__
 
 index_fields = ['pid', 'type', 'status', 'comments', 'rate', 'updatetime']
@@ -31,12 +30,13 @@ index_fields = ['pid', 'type', 'status', 'comments', 'rate', 'updatetime']
 
 @app.route('/', methods=['GET'])
 def index():
-    projectdb = app.config.get("projectdb")
-    sitedb = app.config.get("sitedb")
-    urlsdb = app.config.get("urlsdb")
-    attachmentdb = app.config.get("attachmentdb")
-    keywordsdb = app.config.get("keywordsdb")
-    resultdb = app.config.get("resultdb")
+    db = app.config.get("db")
+    projectdb = db["ProjectsDB"]
+    sitedb = db["SitesDB"]
+    taskdb = db["TaskDB"]
+    urlsdb = db["UrlsDB"]
+    keywordsdb = db["KeywordsDB"]
+    resultdb = db["ArticlesDB"]
     ctime = int(time.time())
 #    aggregate = resultdb.aggregate_by_day(ctime, where = {"status": 1})
 
@@ -53,9 +53,9 @@ def index():
         "project": projectdb.get_count() if projectdb else 0,
         "site": sitedb.count(where={}) if sitedb else 0,
         "urls": urlsdb.count(where={}) if urlsdb else 0,
-        "attachment": attachmentdb.count(where={}) if attachmentdb else 0,
+        "tasks": taskdb.count(where={}) if taskdb else 0,
         "keywords": keywordsdb.count(where={}) if keywordsdb else 0,
-        "result": resultdb.get_count(ctime, {'status': resultdb.RESULT_STATUS_PARSED}) if resultdb else 0,
+        "result": resultdb.get_count(ctime, {'status': resultdb.STATUS_PARSED}) if resultdb else 0,
         "queues": get_queues(),
         "aggregate_by_day": [i for k, i in sorted(aggregate_by_day.items())]
     }

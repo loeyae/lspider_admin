@@ -1,0 +1,21 @@
+<div class="col-lg-12">
+    <h5>去重设置</h5>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">URL匹配规则</label>
+    <div class="col-lg-9">
+        <textarea name="list-unique-url" placeholder="以正则书写，所有选项为空表示使用整个URL，否则以其他选项为准。如：[url]\?.*" class="form-control">{{ rule.get('unique', {}).get('url', '') }}</textarea>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">Query参数</label>
+    <div class="col-lg-9">
+        <textarea name="list-unique-query" placeholder="URL中的参数，设置该选项并且URL匹配规则为空时，讲使用url基础部分和设置中的参数作为用来去重的URL，多个时以“|”分隔，如: id|pid" class="form-control">{{ rule.get('unique', {}).get('query', '') }}</textarea>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">匹配到的数据</label>
+    <div class="col-lg-9">
+        <textarea name="list-unique-data" placeholder="解析规则中匹配到的数据，多个时以“|”分隔，如：name|nick" class="form-control">{{ rule.get('unique', {}).get('data', '') }}</textarea>
+    </div>
+</div>

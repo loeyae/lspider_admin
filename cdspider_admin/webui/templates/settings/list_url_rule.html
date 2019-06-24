@@ -1,0 +1,67 @@
+<div class="col-lg-12">
+    <h5>URL高级组合规则</h5>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">基本url</label>
+    <div class="col-lg-9">
+        <input type="text" class="form-control" name="list-url-base"
+               value="{{ rule.get('url', {}).get('base', '') }}">
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">解析规则中url对应key</label>
+    <div class="col-lg-9">
+        <input type="text" class="form-control" name="list-url-name"
+               value="{{ rule.get('url', {}).get('name', '') }}">
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">组合方式</label>
+    <div class="col-lg-9">
+        <select name="list-url-mode" class="form-control">
+            <option value="get" {% if rule.get('url', {}).get('mode', '') ==  'get' %} selected {% endif %}>GET参数</option>
+            <option value="format" {% if rule.get('url', {}).get('mode', '') == 'format' %} selected {% endif %}>格式化URL</option>
+            <option value="replace" {% if rule.get('url', {}).get('mode', '') == 'replace' %} selected {% endif %}>替换URL</option>
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">自定义字段</label>
+    <div class="col-lg-9 input-group">
+        <textarea placeholder="自定义字段,多个字段，通过回车分割,字段名（字段名必须为英文字母组成，重复无效，不能为：url、title、content、author、created）与字段描述之间使用“|”间隔，比如: name|姓名{{ '\r\n' }}nick|昵称" class="form-control" data-parsley-multiple-of data-parsley-trigger="focusout"></textarea>
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button" data-ride="add-parse-rule" data-column="list-url-parse"
+                  data-target='#list-url-parser-columns'>增加</button>
+        </span>
+    </div>
+</div>
+<div id="list-url-parser-columns">
+    {% if rule.get('url', {}).get('parse', {}) %}
+    {% for k,v in rule['url']['parse'].items() %}
+    <div class="form-group" id="list-url-parse-column-{{ k }}">
+        <label class="col-lg-2 control-label">{{ v['name'] }}识别规则</label>
+        <div class="col-lg-9 input-group dropdown combobox m-b">
+            <div class="input-group-btn">
+                <button type="button" class="btn btn-small btn-white dropdown-toggle" data-toggle="dropdown"><i class="caret"></i></button>
+                <ul class="dropdown-menu pull-right">
+                    <li data-value="@value:"><a href="#">固定值</a></li>
+                    <li data-value="@xpath:"><a href="#">XPATH选择器</a></li>
+                    <li data-value="@css:"><a href="#">CSS选择器</a></li>
+                    <li data-value="@reg:"><a href="#">正则表达式</a></li>
+                    <li data-value="@json:"><a href="#">JSON表达式</a></li>
+                </ul>
+            </div>
+            <input type="text" name="list-url-parse-{{ k }}" placeholder="" class="input-small form-control" value="{{ v['filter'] }}" />
+
+            <input type="hidden" name="list-url-parse-name-{{ k }}" value="{{ v['name'] }}" />
+            <span class="input-group-btn"><a href="#list-url-parse-column-{{ k }}" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>
+        </div>
+        <label class="col-lg-2 control-label">{{ v['name'] }}提取规则</label>
+        <div class="col-lg-9 input-group">
+            <input type="text" name="list-url-parse-{{ k }}-extract" placeholder=""
+                   class="input-small form-control" value="{{ v['extract'] }}" />
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>

@@ -1,0 +1,424 @@
+{% extends 'layout.html' %}
+{% block custom_header %}
+<link rel="stylesheet" href="{{ url_for('static', filename='codemirror/lib/codemirror.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='codemirror/theme/eclipse.css') }}">
+<script src="{{ url_for('static', filename='codemirror/lib/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/mode/python/python.js') }}"></script>
+{% endblock %}
+{% block body %}
+<!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                    <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                    <li><a href="/project/list"><i class="icon-list-ul"></i>项目</a></li>
+                    <li><a href="/site/list?pid={{ rule['pid'] }}"><i class="icon-list-ul"></i>站点</a></li>
+                    <li><a href="/task/list?sid={{ rule['sid'] }}"><i class="icon-list-ul"></i>任务</a></li>
+                    <li><a href="/rule/list?tid={{ task_info['uuid'] }}"><i class="icon-list-ul"></i>规则</a></li>
+                    <li class="active">编辑规则-{{ rule.get('name', '') }}</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+                    <form class="form-horizontal">
+                        <header class="panel-heading">
+                            <ul class="nav nav-tabs pull-right">
+                                <li class="active">
+                                    <a href="#rule-base" data-toggle="tab">基本设置</a>
+                                </li>
+                                <li>
+                                    <a href="#rule-list" data-toggle="tab">爬虫规则</a>
+                                </li>
+                                <li>
+                                    <a href="#rule-script" data-toggle="tab">自定义Handle</a>
+                                </li>
+                            </ul>
+                            <h4><i class="icon-edit"></i>编辑规则</h4>
+                        </header>
+                        <div class="tab-content">
+                            <input type="hidden" name="project-id" id="project-id" value="{{ rule['pid'] }}">
+                            <input type="hidden" name="site-id" id="rule-id" value="{{ rule['sid'] }}"/>
+                            <input type="hidden" name="task-id" id="task-id" value="{{ rule['tid'] }}"/>
+                            <div class="tab-pane active" id="rule-base">
+                                <div class="col-lg-12">
+                                    <h5>规则信息</h5>
+                                    <input type="hidden" name="mode" value="rule-base">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">规则名称</label>
+                                    <div class="col-lg-9">
+                                        <input type="text" name="name" placeholder="规则名称" class="form-control"
+                                               data-parsley-trigger="change" data-parsley-required="true"
+                                               value="{{ rule.get('name', '') }}" data-parsley-length='[2, 32]'>
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">媒体类型</label>
+                                    <div class="col-lg-9">
+                                        <select name="mediaType" data-parsley-required="true" class="form-control">
+                                            <option value="">请选择媒体类型</option>
+                                            {% for k,v in app_config.get('media_type', {}).items() %}
+                                            <option value="{{ k }}" {% if k==rule.get('mediaType') %}selected{%
+                                                    endif %}>{{ v }}
+                                            </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">更新频次</label>
+                                    <div class="col-lg-9">
+                                        <select id="select_num" name="frequency" class="form-control">
+                                            {% for k,v in app_config.get('frequencymap_sorted') %}
+                                            <option value="{{ k }}" {% if rule.get(
+                                            'frequency', 1) == k %} selected {% endif %}>{{ v[1] }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div id="rule-list" class="tab-pane">
+                                <input type="hidden" name="mode" value="rule-list">
+                                {% include 'settings/list_request_base.html' %}
+                                {% if task_info['type'] == "search" or task_info['type'] == "list-search" %}
+                                {% include 'settings/list_request_keyword.html' %}
+                                {% endif %}
+                                {% include 'settings/list_request_params.html' %}
+                                {% include 'settings/list_paging.html' %}
+                                {% include 'settings/list_parse_base.html' %}
+                                {% include 'settings/list_parse_default.html' %}
+                                {% set prefix = True %}
+                                {% include 'settings/list_parse_custom.html' %}
+                                {% include 'settings/list_url_rule.html' %}
+                                {% include 'settings/unique.html' %}
+                            </div>
+                            <div id="rule-script" class="tab-pane">
+                                <div class="col-lg-12">
+                                    &nbsp;
+                                    <input type="hidden" name="mode" value="rule-script">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">自定义脚本</label>
+                                    <div class="col-lg-9">
+                                        <textarea id="code">{{ rule.get('script', '') }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <h5>验证规则</h5>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">测试URL</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" name="script-test-url" id="script-test-url" value=""
+                                               placeholder="为空时使用规则URL">
+                                        <button type="button" name="script-test">测试</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">下一页URL</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-next-url-pane" class="col-lg-12 text-default"></div>
+                                    </div>
+                                    <input type="hidden" name="script-next-url" id="script-next-url" value="">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">测试结果</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-pane" class="col-lg-12 text-default"></div>
+                                        <div id="script-test-item-pane" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">脚本输出</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-out" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">错误信息</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-error" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group text-center">
+                                <input type="reset" class="btn btn-white btn-large btn-prev" value="取消">
+                                <button type="button" class="btn btn-white btn-large btn-next" id="form_submit">修改
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% include 'settings/loading.html' %}
+{% endblock %}
+
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/fuelux/fuelux.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/parsley.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/zh_cn.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/zh_cn.extra.js') }}"></script>
+
+
+<script>
+var editor = false
+$(".nav li:last a").on('shown.bs.tab', function (e) {
+    if (!editor) {
+        editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            lineSeparator: '\n',
+            indentUnit: 4,
+        });
+        editor.setOption("theme", "eclipse");
+    }
+})
+$('[name=script-test]').click(function(e){
+    var index = $(".nav-tabs li.active").index()
+    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
+    $step.find(':input').data('parsley-group', 'block-' + index);
+    var vr = true
+    $('.main').find('form').parsley().whenValidate({
+       group: 'block-' + index
+    }).fail(function(){
+        vr = false
+    }).done(function() {
+      vr = true
+    })
+    if (vr) {
+        var data = $step.find(':input').serialize()
+        if ($(".nav-tabs li.active a").attr("href") == '#rule-script') {
+            data += '&script='+ encodeURIComponent(editor.getValue());
+        }
+        data += '&projectid='+ $("#project-id").val() + '&ruleid='+ $("#rule-id").val() + '&dmode=list'
+        var next_url = $("#script-next-url").val()
+        if (next_url) {
+            data += '&url='+ encodeURIComponent(next_url)
+        } else {
+            data += '&url='+ encodeURIComponent($("#script-test-url").val())
+        }
+        var s = $(e.target).data('save')
+        if (s) {
+            data += '&save='+ s
+        }
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/run',
+            data: data,
+            beforeSend: function(){
+                $("#script-test-pane").html('')
+                $("#script-test-error").html('')
+                $("#script-test-out").html('')
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
+//                .one('hide', function () {
+//                  $this.is(':visible') && $this.focus()
+//                })
+                $("#load").button('loading')
+            },
+            success: function(result){
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                if (result.status == 200) {
+                    if (result.result) {
+                        var list = result.result[0]
+                        var error = result.result[1]
+                        var save = result.result[4]
+                        if (list && list.list){
+                            var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
+                            for (var idx in list.list) {
+                                var item = list.list[idx];
+                                txt += '<div class="col-lg-6"><div class="col-lg-9" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="'+ item['url'] +'" title="'+ item['url'] +'" target="_blank">'
+                                if (item['title']) {
+                                    txt += item['title'];
+                                } else {
+                                    txt += item['url'];
+                                }
+                                txt += '</a></div><div class="col-lg-3"><a href="javascript:void(0)" data-url="'+ item['url'] +'">验证子规则</a></div></div>';
+                            }
+                            txt += '</div>'
+                            $("#script-test-pane").html(txt)
+                            if (save && save["next_url"]){
+                                $("#script-next-url").val(save["next_url"])
+                                $("#script-next-url-pane").html(save["next_url"])
+                                $("[name=script-test]").text("下一页").data('save', encodeURIComponent('{"current_page":'+
+                                save["page"] +'}'))
+                            }
+                        } else {
+                            if ($("[name=script-test]").text() == "下一页") {
+                                $("[name=script-test]").text("测试").data('save', '')
+                            }
+                            $("#script-test-pane").html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                        }
+                        if (error) {
+                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        }
+                        var stdout = result.stdout
+                        $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    } else {
+                        alert('请求未成功！')
+                    }
+                } else{
+                    if (result.result) {
+                        var error = result.result[1]
+                        if (error) {
+                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        }
+                    }
+                    var stdout = result.stdout
+                    $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    return false
+                }
+            },
+            error: function(){
+                alert('请求失败。')
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                return false
+            }
+        });
+    }
+})
+$("#script-test-pane a[data-url]").live("click", function(){
+    var index = $(".nav-tabs li.active").index()
+    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
+    $step.find(':input').data('parsley-group', 'block-' + index);
+    var vr = true
+    $('.main').find('form').parsley().whenValidate({
+       group: 'block-' + index
+    }).fail(function(){
+        vr = false
+    }).done(function() {
+      vr = true
+    })
+    if (vr) {
+        var data = $step.find(':input').serialize()
+        if ($(".nav-tabs li.active a").attr("href") == '#rule-script') {
+            data += '&script='+ encodeURIComponent(editor.getValue());
+        }
+        data += '&projectid='+ $("#project-id").val() + '&ruleid='+ $("#rule-id").val() + '&dmode=item&url='+ encodeURIComponent($(this).data("url"))
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/run',
+            data: data,
+            beforeSend: function(){
+                $("#script-test-item-pane").html('')
+                $("#script-test-error").html('')
+                $("#script-test-out").html('')
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
+                $("#load").button('loading')
+            },
+            success: function(result){
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                if (result.status == 200) {
+                    if (result.result) {
+                        var list = result.result[0]
+                        var error = result.result[1]
+                        if (list){
+                            var txt = '<table>'
+                            for (var key in list) {
+                                for (var idx in list[key]) {
+                                    if (typeof(list[key][idx]) == 'object') {
+                                        for (var k in list[key][idx]) {
+                                            var item = list[key][idx][k]
+                                            txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                        }
+                                    } else {
+                                        var item = list[key][idx]
+                                        txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                    }
+                                }
+                            }
+                            txt += '</table>'
+                            $("#script-test-item-pane").html(txt)
+                        } else {
+                            $("#script-test-item-pane").html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                        }
+                        if (error) {
+                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        }
+                        var stdout = result.stdout
+                        $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    } else {
+                        alert('请求未成功！')
+                    }
+                } else{
+                    if (result.result) {
+                        var error = result.result[1]
+                        if (error) {
+                            $("#script-test-error").html('<pre>'+error+'</pre>')
+                        }
+                    }
+                    var stdout = result.stdout
+                    $("#script-test-out").html('<pre>'+ stdout +'</pre>')
+                    return false
+                }
+            },
+            error: function(){
+                alert('请求失败。')
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                return false
+            }
+        });
+    }
+})
+$('#form_submit').click(function () {
+    var index = $(".nav-tabs li.active").index()
+    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
+    $step.find(':input').data('parsley-group', 'block-' + index);
+    var vr = true
+    $('.main').find('form').parsley().whenValidate({
+       group: 'block-' + index
+    }).fail(function(){
+        vr = false
+    }).done(function() {
+      vr = true
+    })
+    if (vr) {
+        var data = $step.find(':input').serialize()
+        if ($(".nav-tabs li.active a").attr("href") == '#rule-script') {
+            data += '&script='+ encodeURIComponent(editor.getValue());
+        }
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/rule/{{ rule["uuid"] }}/edit',
+            data: data,
+            success: function(result){
+                if (result.status == 200) {
+                    if (result.data.update) {
+                        alert('数据保存成功！')
+                    } else {
+                        alert('数据保存失败！')
+                    }
+                } else{
+                    alert('数据保存失败。')
+                    return false
+                }
+            },
+            error: function(){
+                alert('数据保存失败。')
+                return false
+            }
+        });
+    }
+})
+
+</script>
+{% endblock %}

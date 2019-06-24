@@ -322,9 +322,10 @@ $(document).ready(function() {
 		} );
 	});
 
-        $(document).on('click', '#pre-parser-add', function(e){
+        $(document).on('click', '[data-ride="add-parse-rule"]', function(e){
             var $input = $(e.target).parents('.input-group').find(':input')
             var $target = $($(e.target).data('target'))
+            var $column = $(e.target).data('column');
             var _v = $input.val()
             if (_v) {
                 var pre_custom_columns = _v.split("\n")
@@ -334,14 +335,28 @@ $(document).ready(function() {
                     var s = item.split("|");
                     var k = s[0];
                     var v = s[1] ? s[1] : '自定义字段';
-                    _html += '<div class="form-group" id="pre-column-'+ k +'">'+
-                        '<label class="col-lg-2 control-label">'+ v +'识别规则</label>'+
-                        '<div class="col-lg-9 input-group">'+
-                            '<input type="text" name="pre-parse-other-'+ k +'" placeholder="" class="form-control" />'+
-                            '<input type="hidden" name="pre-parse-other-name-'+ k +'" value="'+ v +'" />'+
-                            '<span class="input-group-btn"><a href="#pre-column-'+ k +'" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>'+
-                        '</div>'+
-                    '</div>';
+                    _html += '<div class="form-group" id="'+ $column +'-column-'+ k +'">'+
+                            '<label class="col-lg-2 control-label">'+ v +'识别规则</label>'+
+                            '<div class="col-lg-9 input-group dropdown combobox m-b">'+
+                                '<div class="input-group-btn">'+
+                                     '<button type="button" class="btn btn-small btn-white dropdown-toggle" data-toggle="dropdown"><i class="caret"></i></button>'+
+                                     '<ul class="dropdown-menu pull-right">'+
+                                         '<li data-value="@value:"><a href="#">固定值</a></li>'+
+                                         '<li data-value="@xpath:"><a href="#">XPATH选择器</a></li>'+
+                                         '<li data-value="@css:"><a href="#">CSS选择器</a></li>'+
+                                         '<li data-value="@reg:"><a href="#">正则表达式</a></li>'+
+                                         '<li data-value="@json:"><a href="#">JSON表达式</a></li>'+
+                                     '</ul>'+
+                                '</div>'+
+                                '<input type="text" name="'+ $column +'-'+ k +'" placeholder="" class="form-control" />'+
+                                '<input type="hidden" name="'+ $column +'-name-'+ k +'" value="'+ v +'" />'+
+                                '<span class="input-group-btn"><a href="#'+ $column +'-column-'+ k +'" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>'+
+                            '</div>'+
+                            '<label class="col-lg-2 control-label">'+ v +'提取规则</label>'+
+                            '<div class="col-lg-9 input-group">'+
+                                '<input type="text" name="'+ $column +'-'+ k +'-extract" placeholder="" class="form-control" />'+
+                            '</div>'+
+                        '</div>';
                 }
                 $target.append(_html)
             }

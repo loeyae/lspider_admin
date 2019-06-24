@@ -18,7 +18,7 @@ try:
     from flask_login.utils import login_user, logout_user
 except ImportError:
     from flask.ext.login.utils import login_user, logout_user
-from cdspider.database.base import AdminDB
+from cdspider_admin.database.base import AdminDB
 from .app import app, User
 
 @app.route('/login', methods=['POST', 'GET'])
