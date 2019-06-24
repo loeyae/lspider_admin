@@ -420,28 +420,28 @@ def build_form_data(data):
         parser = data['parse']
         data['parse'] = {}
         data['parse']['filter'] = parser.get('filter', '')
-        if 'title' in parser['item']:
+        if 'item' in parser and 'title' in parser['item']:
             title_rule = parser['item'].pop('title', {})
             data['parse']['title'] = title_rule.get('filter', '')
             data['parse']['title_extract'] = title_rule.get('extract', '')
         else:
             data['parse']['title'] = parser.get('title', {}).get('filter', '')
             data['parse']['title_extract'] = parser.get('title', {}).get('extract', '')
-        if "url" in parser['item']:
+        if 'item' in parser and "url" in parser['item']:
             url_rule = parser['item'].pop('url', {})
             data['parse']['url'] = url_rule.get('filter', '')
             data['parse']['url_patch'] = url_rule.get('patch', '')
         else:
             data['parse']['content'] = parser.get('content', {}).get('filter', '')
             data['parse']['content_extract'] = parser.get('content', {}).get('extract', '')
-        if 'author' in parser['item']:
+        if 'item' in parser and 'author' in parser['item']:
             author_rule = parser['item'].pop('author', {})
             data['parse']['author'] = author_rule.get('filter', '')
             data['parse']['author_extract'] = author_rule.get('extract', '')
         else:
             data['parse']['author'] = parser.get('author', {}).get('filter', '')
             data['parse']['author_extract'] = parser.get('author', {}).get('extract', '')
-        if 'pubtime' in parser['item']:
+        if 'item' in parser and 'pubtime' in parser['item']:
             pubtime_rule = parser['item'].pop('pubtime', {})
             data['parse']['pubtime'] = pubtime_rule.get('filter', '')
             data['parse']['pubtime_extract'] = pubtime_rule.get('extract', '')
@@ -449,9 +449,12 @@ def build_form_data(data):
             data['parse']['pubtime'] = parser.get('pubtime', {}).get('filter', '')
             data['parse']['pubtime_extract'] = parser.get('pubtime', {}).get('extract', '')
 
-        if parser['item']:
-            data['parse']['other'] = {}
+        data['parse']['other'] = {}
+        if 'item' in parser and parser['item']:
             for _k, val in parser['item'].items():
+                data['parse']['other'][_k] = val
+        elif parser:
+            for _k, val in parser.items():
                 data['parse']['other'][_k] = val
     else:
         data['parse'] = {}
