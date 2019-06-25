@@ -87,7 +87,7 @@
                             <div id="rule-list" class="tab-pane">
                                 <input type="hidden" name="mode" value="rule-list">
                                 {% include 'settings/list_request_base.html' %}
-                                {% if task_info['type'] == "search" or task_info['type'] == "list-search" %}
+                                {% if task_info['type'] == "search" or task_info['type'] == "site-search" %}
                                 {% include 'settings/list_request_keyword.html' %}
                                 {% endif %}
                                 {% include 'settings/list_request_params.html' %}
