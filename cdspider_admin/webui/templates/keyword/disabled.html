@@ -52,19 +52,19 @@
 
                                 {% for item in keyword_list %}
                                 <tr>
-                                    <td ><input type="checkbox" class="checkbox" value="{{ item['kid'] }}"></td>
-                                    <td >{{ item['kid'] }}</td>
+                                    <td ><input type="checkbox" class="checkbox" value="{{ item['uuid'] }}"></td>
+                                    <td >{{ item['uuid'] }}</td>
                                     <td >{{ item['word'] }}</td>
-                                    <td>{{ app_config.get('keywordstatus', {}).get(str(item['status']), '初始化') }}</td>
-                                    <td>{{ item['createtime']|time_func }}</td>
+                                    <td>{{ app_config.get('status', {}).get(str(item['status']), '初始化') }}</td>
+                                    <td>{{ item['ctime']|time_func }}</td>
                                     <td>{{ item['src_txt'] }}</td>
 
                                     <td >
 
                                         <input class="btn btn-default btn-small" name="keywords-enable" type="button"
-                                               data-sid="{{  item['kid'] }}" value="启用"/>
+                                               data-kid="{{  item['uuid'] }}" value="启用"/>
                                         <input class="btn btn-default btn-small" name="keywords-delete" type="button"
-                                               data-sid="{{  item['kid'] }}" value="删除"/>
+                                               data-kid="{{  item['uuid'] }}" value="删除"/>
                                     </td>
                                 </tr>
                                 {% endfor %}
@@ -89,7 +89,7 @@ $(function(){
     $("[name=keywords-enable]").click(function() {
         $.ajax({
             type: 'get',
-            url: '/keyword/'+ $(this).data('sid') +'/enable',
+            url: '/keyword/'+ $(this).data('kid') +'/enable',
             dataType: 'json',
             success: function(){
                 location.reload();
@@ -100,7 +100,7 @@ $(function(){
         if (confirm("删除关键词将会删除与该关键字关联的所有任务,是否确认删除?")) {
             $.ajax({
                 type: 'get',
-                url: '/keyword/'+ $(this).data('sid') +'/delete',
+                url: '/keyword/'+ $(this).data('kid') +'/delete',
                 dataType: 'json',
                 success: function(){
                     location.reload();

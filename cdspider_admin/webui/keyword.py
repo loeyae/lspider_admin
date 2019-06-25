@@ -118,9 +118,9 @@ def keyword_active(id):
             return jsonify({"status": 500, "message": "无效的关键词！", "error": "error"})
         ret=keyworddb_obj.active(id)
         if ret:
-            app.config['search_status'](
+            app.config['status'](
                 {'kid': id, "mode": 'search', "status": keyworddb_obj.STATUS_ACTIVE})
-            app.config['search_status'](
+            app.config['status'](
                 {'kid': id, "mode": 'site-search', "status": keyworddb_obj.STATUS_ACTIVE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:

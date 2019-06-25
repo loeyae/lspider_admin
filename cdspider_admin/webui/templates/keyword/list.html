@@ -55,21 +55,21 @@
 
                                 {% for item in keyword_list %}
                                 <tr>
-                                    <td ><input type="checkbox" name="id" class="checkbox" value="{{ item['kid'] }}"></td>
-                                    <td >{{ item['kid'] }}</td>
+                                    <td ><input type="checkbox" name="id" class="checkbox" value="{{ item['uuid'] }}"></td>
+                                    <td >{{ item['uuid'] }}</td>
                                     <td >{{ item['word'] }}</td>
                                     <td>
                                         {{ app_config.get('keywordstatus', {}).get(str(item['status']), '初始化') }}
                                     </td>
-                                    <td>{{ item['createtime']|time_func }}</td>
+                                    <td>{{ item['ctime']|time_func }}</td>
                                     <td>{{ item['src_txt'] }}</td>
 
                                     <td >
 
-                                        <input class="btn btn-default btn-small" name="keywords-edit" type="button" data-kid="{{  item['kid'] }}" value="编辑"/>
-                                        <input class="btn btn-default btn-small" name="keywords-active" type="button" data-kid="{{  item['kid'] }}" value="激活" {% if app_config.get('keywordstatus', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
+                                        <input class="btn btn-default btn-small" name="keywords-edit" type="button" data-kid="{{  item['uuid'] }}" value="编辑"/>
+                                        <input class="btn btn-default btn-small" name="keywords-active" type="button" data-kid="{{  item['uuid'] }}" value="激活" {% if app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
 
-                                        <select class="input-small inline" name="keywords-oparate" data-kid="{{  item['kid'] }}">
+                                        <select class="input-small inline" name="keywords-oparate" data-kid="{{  item['uuid'] }}">
                                             <option value="default">更多操作</option>
                                             <option value="disable">禁用</option>
                                             <option value="delete">删除</option>
