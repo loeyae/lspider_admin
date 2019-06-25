@@ -23,6 +23,27 @@ setup(
         'cdspider>=0.1',
         'cdspider_bbs>=0.1',
     ],
+    package_data = {
+        'cdspider_admin': [
+            'config/main.json',
+            'config/app.json',
+            "webui/static/font/*.*",
+            "webui/static/css/*.*",
+            "webui/static/images/*.*",
+            "webui/static/js/*.*",
+            "webui/static/js/*/*.*",
+            "webui/static/js/*/*/*.*",
+            "webui/static/codemirror/*.*",
+            "webui/static/codemirror/*/*.*",
+            "webui/static/codemirror/*/*/*.*",
+            "webui/static/attach/*.html",
+            "webui/templates/*.html",
+            "webui/templates/*/*.html",
+            "libs/goose3/resources/images/*.txt",
+            "libs/goose3/resources/text/*.txt",
+        ],
+    },
+
     entry_points={
         'console_scripts': [
             'cdspider_admin = cdspider_admin.run:main',
