@@ -250,10 +250,10 @@ def urls_active_rule(id):
         if not id or not urls_info:
             return jsonify({"status": 500, "message": "无效的URL", "error": "error"})
         rule_obj = app.config.get('db')["ListRuleDB"]
-        rule_info = rule_obj.get_detail(id)
+        rule_info = rule_obj.get_detail(urls_info["ruleId"])
         if not id or not rule_info:
             return jsonify({"status": 500, "message": "无效的规则", "error": "error"})
-        if rule_info['ruleStatus'] != rule_obj.STATUS_ACTIVE:
+        if rule_info['status'] != rule_obj.STATUS_ACTIVE:
             return jsonify({"status": 500, "message": "请先激活规则", "error": "error"})
         ret=urls_obj.active_rule(id)
     except Exception as e:
@@ -270,8 +270,16 @@ def urls_list_active_rule():
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
         url_list = urls_obj.get_list(where={'uid': arr, 'ruleStatus': urls_obj.STATUS_INIT})
+        rule_obj = app.config.get('db')["ListRuleDB"]
+        rule_dict = {}
         i = 0
         for item in iterator2list(url_list):
+            rule = rule_dict.get(str(item['ruleId']))
+            if not rule:
+                rule = rule_obj.get_detail(item['ruleId'])
+                rule_dict.update({str(item['ruleId']), rule})
+            if not rule or rule.get('status') != rule_obj.STATUS_ACTIVE:
+                continue
             ret=urls_obj.active_rule(item['uuid'])
             i += 1
         if i == 0:
