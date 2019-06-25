@@ -21,6 +21,7 @@ setup(
         'flask_login>=0.4.1',
         'WsgiDAV==2.3.0',
         'cdspider>=0.1',
+        'cdspider_bbs>=0.1',
     ],
     entry_points={
         'console_scripts': [
