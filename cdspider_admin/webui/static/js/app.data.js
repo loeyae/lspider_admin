@@ -345,7 +345,7 @@ $(document).ready(function() {
                                          '<li data-value="@value:"><a href="#">固定值</a></li>'+
                                          '<li data-value="@xpath:"><a href="#">XPATH选择器</a></li>'+
                                          '<li data-value="@css:"><a href="#">CSS选择器</a></li>'+
-                                         ‘<li data-value="@url:"><a href="#">匹配URL</a></li>’+
+                                         '<li data-value="@url:"><a href="#">匹配URL</a></li>’+
                                          '<li data-value="@reg:"><a href="#">正则表达式</a></li>'+
                                          '<li data-value="@json:"><a href="#">JSON表达式</a></li>'+
                                      '</ul>'+
