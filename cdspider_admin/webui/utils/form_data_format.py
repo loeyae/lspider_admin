@@ -467,6 +467,7 @@ def build_form_data(data):
             for _k, val in parser['item'].items():
                 data['parse']['other'][_k] = val
         elif parser:
+            print(parser)
             for _k, val in parser.items():
                 data['parse']['other'][_k] = val
     else:
