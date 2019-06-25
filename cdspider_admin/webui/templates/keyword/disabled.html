@@ -1,0 +1,162 @@
+{% extends 'layout.html' %}
+{% block body %}
+
+  <!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+            <h4><i class="icon-table"></i>禁用关键词</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                  <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                  <li class="active">关键词</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+
+                    <div class="row text-small">
+                        <div class="col-lg-6 m-b-mini">
+                            <select class="input-small inline" id="keywords-oparate">
+                                <option value="default">批量操作</option>
+                                <option value="enable">启用</option>
+                                <option value="delete">删除</option>
+                            </select>
+                            <a href="/keyword/list"><i class="icon-list-ul"></i>关键词列表</a>
+                        </div>
+                    </div>
+                    <div class="pull-out m-t-small">
+                        <table class="table table-striped b-t text-small">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th class="th-sortable" data-toggle="class">关键词id
+                                        <span class="th-sort">
+                                            <i class="icon-sort-down text"></i>
+                                            <i class="icon-sort-up text-active"></i>
+                                            <i class="icon-sort"></i>
+                                        </span>
+                                    </th>
+                                    <th>关键词</th>
+                                    <th>状态</th>
+                                    <th>创建时间</th>
+                                    <th>创建方式</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for item in keyword_list %}
+                                <tr>
+                                    <td ><input type="checkbox" class="checkbox" value="{{ item['kid'] }}"></td>
+                                    <td >{{ item['kid'] }}</td>
+                                    <td >{{ item['word'] }}</td>
+                                    <td>{{ app_config.get('keywordstatus', {}).get(str(item['status']), '初始化') }}</td>
+                                    <td>{{ item['createtime']|time_func }}</td>
+                                    <td>{{ item['src_txt'] }}</td>
+
+                                    <td >
+
+                                        <input class="btn btn-default btn-small" name="keywords-enable" type="button"
+                                               data-sid="{{  item['kid'] }}" value="启用"/>
+                                        <input class="btn btn-default btn-small" name="keywords-delete" type="button"
+                                               data-sid="{{  item['kid'] }}" value="删除"/>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <footer class="panel-footer dataTables_wrapper">
+                        {% include 'paging.html' %}
+                    </footer>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% endblock %}
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/datatables/jquery.dataTables.min.js') }}"></script>
+<script>
+$(function(){
+    $("[name=keywords-enable]").click(function() {
+        $.ajax({
+            type: 'get',
+            url: '/keyword/'+ $(this).data('sid') +'/enable',
+            dataType: 'json',
+            success: function(){
+                location.reload();
+            },
+        });
+    })
+    $("[name=keywords-delete]").click(function() {
+        if (confirm("删除关键词将会删除与该关键字关联的所有任务,是否确认删除?")) {
+            $.ajax({
+                type: 'get',
+                url: '/keyword/'+ $(this).data('sid') +'/delete',
+                dataType: 'json',
+                success: function(){
+                    location.reload();
+                }
+            });
+        }
+    })
+    $("#keywords-oparate").change(function(){
+        var val = $(this).val()
+        var data = $(":checked[name=id]").map(function(){
+            return $(this).val()
+        }).get().join(',')
+        switch (val){
+            case 'enable':
+                $.ajax({
+                    type: 'post',
+                    url: '/keyword/enable',
+                    dataType: 'json',
+                    data: {"id": data},
+                    success: function(result){
+                        if (result.status == 400) {
+                                $("#keywords-oparate").val('default')
+                        } else if (result.status == 200) {
+                            location.reload();
+                        } else {
+                            alert(result.message)
+                            $("#keywords-oparate").val('default')
+                        }
+                    }
+                });
+                return true
+            case 'delete':
+                if (confirm("删除关键词将会删除选中关键词相关任务,是否确认删除?")) {
+                    $.ajax({
+                        type: 'post',
+                        url: '/keyword/delete',
+                        dataType: 'json',
+                        data: {"id": data},
+                        success: function(result){
+                            if (result.status == 400) {
+                                $("#keywords-oparate").val('default')
+                            } else if (result.status == 200) {
+                                location.reload();
+                            } else {
+                                alert(result.message)
+                                $("#keywords-oparate").val('default')
+                            }
+                        },
+                    });
+                    return true;
+                }
+                return false;
+            default:
+                return true;
+        }
+    })
+})
+</script>
+{% endblock %}
