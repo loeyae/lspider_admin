@@ -256,6 +256,7 @@ def urls_active_rule(id):
         if rule_info['status'] != rule_obj.STATUS_ACTIVE:
             return jsonify({"status": 500, "message": "请先激活规则", "error": "error"})
         ret=urls_obj.active_rule(id)
+        return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
         return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
