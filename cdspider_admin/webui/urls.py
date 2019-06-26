@@ -97,14 +97,11 @@ def urls_update(id):
             ruleId = int(dic.get('ruleId', 0))
             urlsdb_obj = app.config.get('db')["UrlsDB"]
             ret=urlsdb_obj.update(id, {"title": title, "url": url, "ruleId": ruleId, "frequency": frequency,
-                                       "updatetime": int(time.time()), "status": urlsdb_obj.STATUS_INIT})
+                                       "updatetime": int(time.time())})
             if ret:
                 spidertask_obj = app.config.get('db')['SpiderTaskDB']
                 spidertask_obj.update_many(task_info['type'], {"ulr": dic['url'], "frequency": frequency},
                 {"uid": id})
-                app.config['status'](
-                    {'uid': id, "mode": task_info['type'],  "status": urlsdb_obj.STATUS_INIT})
-            return redirect('/urls/list?tid=%s' % tid)
         except Exception as e:
             app.logger.error(traceback.format_exc())
             return render_template('error.html', message="编辑URL出错了")
