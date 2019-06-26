@@ -92,6 +92,33 @@ def keyword_del(id):
         return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
 
 
+@app.route('/keyword/delete', methods=['POST'])
+def keyword_list_del():
+    try:
+        keyworddb_obj = app.config.get('db')["KeywordsDB"]
+        ids = request.form.get('id')
+        if not ids:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        arr = ids.split(',')
+        arr = [int(k) for k in arr]
+        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE, keyworddb_obj.STATUS_DISABLE]})
+        i = 0
+        for item in list(project_list):
+            ret=keyworddb_obj.delete(item['uuid'])
+            if ret:
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'search', "status": keyworddb_obj.STATUS_DELETED})
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'site-search', "status": keyworddb_obj.STATUS_DELETED})
+            i += 1
+        if i == 0:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        return jsonify({"status": 200, "message": "Ok", "data": {"id": ids}})
+    except Exception as e:
+        app.logger.error(traceback.format_exc())
+        return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
+
 @app.route('/keyword/<int:id>/disable', methods=['GET'])
 def keyword_disable(id):
     try:
@@ -106,6 +133,33 @@ def keyword_disable(id):
             app.config['status'](
                 {'kid': id, "mode": 'site-search', "status": keyworddb_obj.STATUS_DISABLE})
             return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
+    except Exception as e:
+        app.logger.error(traceback.format_exc())
+        return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
+
+@app.route('/keyword/disable', methods=['POST'])
+def keyword_list_disable():
+    try:
+        keyworddb_obj = app.config.get('db')["KeywordsDB"]
+        ids = request.form.get('id')
+        if not ids:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        arr = ids.split(',')
+        arr = [int(k) for k in arr]
+        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_ACTIVE]})
+        i = 0
+        for item in list(project_list):
+            ret=keyworddb_obj.disable(item['uuid'])
+            if ret:
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'search', "status": keyworddb_obj.STATUS_DISABLE})
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'site-search', "status": keyworddb_obj.STATUS_DISABLE})
+            i += 1
+        if i == 0:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        return jsonify({"status": 200, "message": "Ok", "data": {"id": ids}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
         return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
@@ -139,6 +193,33 @@ def keyword_active(id):
             app.config['status'](
                 {'kid': id, "mode": 'site-search', "status": keyworddb_obj.STATUS_ACTIVE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
+    except Exception as e:
+        app.logger.error(traceback.format_exc())
+        return jsonify({"status": 500, "message": "出错了！", "error": str(e)})
+
+
+@app.route('/keyword/active', methods=['POST'])
+def keyword_list_active():
+    try:
+        keyworddb_obj = app.config.get('db')["KeywordsDB"]
+        ids = request.form.get('id')
+        if not ids:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        arr = ids.split(',')
+        arr = [int(k) for k in arr]
+        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_DISABLE]})
+        i = 0
+        for item in list(project_list):
+            ret=keyworddb_obj.active(item['uuid'])
+            if ret:
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'search', "status": keyworddb_obj.STATUS_ACTIVE})
+                app.config['status'](
+                    {'kid': item['uuid'], "mode": 'site-search', "status": keyworddb_obj.STATUS_ACTIVE})
+            i += 1
+        if i == 0:
+            return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
+        return jsonify({"status": 200, "message": "Ok", "data": {"id": ids}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
         return jsonify({"status": 500, "message": "出错了！", "error": str(e)})

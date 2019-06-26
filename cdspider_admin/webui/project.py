@@ -139,7 +139,7 @@ def project_list_delete():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         projectdb_obj = app.config.get('db')["ProjectsDB"]
-        project_list = projectdb_obj.get_list(where={'pid': arr, 'status': [projectdb_obj.STATUS_INIT, projectdb_obj.STATUS_ACTIVE, projectdb_obj.STATUS_DISABLE]})
+        project_list = projectdb_obj.get_list(where={'pid': arr, 'status': [projectdb_obj.STATUS_INIT, projectdb_obj.STATUS_DISABLE]})
         i = 0
         for item in list(project_list):
             ret = projectdb_obj.delete(item['pid'])
