@@ -303,7 +303,7 @@ def task_update(tid):
             ret = taskdb_obj.update(tid, data)
             if ret:
                 app.config['status'](
-                    {'tid': tid, "status": taskdb_obj.STATUS_INIT})
+                    {'tid': tid, 'mode': task['type'], "status": taskdb_obj.STATUS_INIT})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:
             app.logger.error(traceback.format_exc())
