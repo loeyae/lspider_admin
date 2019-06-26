@@ -37,6 +37,7 @@ def keyword_add():
                 dic={
                     'word': word,
                     'src_txt':'后台',
+                    'status': keyworddb_obj.STATUS_ACTIVE,
                     'creator':'admin',
                     'updator':'admin'
                 }
