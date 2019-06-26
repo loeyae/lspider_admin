@@ -30,9 +30,10 @@ def newtask(ctx):
               show_default=True)
 @click.option('-w', '--where', callback=load_param, help="condition")
 @click.option('-c', '--created', default=0, help="create time")
+@click.option('-i', '--interval', default=1, help="create time")
 @click.option('-o', '--output', default=None, help='数据保存的文件', show_default=True)
 @click.pass_context
-def fetch_result_list(ctx, spider_cls, where, created, output):
+def fetch_result_list(ctx, spider_cls, where, created, interval, output):
     """
     抓取文章测试结果
     """
@@ -64,6 +65,7 @@ def fetch_result_list(ctx, spider_cls, where, created, output):
                     f = open(output, 'w')
                     f.write(json.dumps(ret))
                     f.close()
+            time.sleep(int(interval))
         if has_item is False:
             break
 
