@@ -81,7 +81,7 @@ def task_delete(id):
             return jsonify({"status": 500, "message": "无效的任务", "error": "error"})
         ret = taskdb_obj.delete(id)
         if ret:
-            app.config['status']({'tid': id, "status": taskdb_obj.STATUS_DELETED})
+            app.config['status']({'tid': id, "mode": task_info['type'], "status": taskdb_obj.STATUS_DELETED})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -109,7 +109,7 @@ def task_list_delete():
             ret = taskdb_obj.delete(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'tid': item['uuid'], "status": taskdb_obj.STATUS_DELETED})
+                    {'tid': item['uuid'], "mode": item['type'], "status": taskdb_obj.STATUS_DELETED})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -216,7 +216,7 @@ def task_disable(id):
             return jsonify({"status": 500, "message": "无效的站点", "error": "error"})
         ret = taskdb_obj.disable(id)
         if ret:
-            app.config['status']({'tid': id, "status": taskdb_obj.STATUS_DISABLE})
+            app.config['status']({'tid': id, "mode": task_info['type'], "status": taskdb_obj.STATUS_DISABLE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -244,7 +244,7 @@ def task_list_disable():
             ret = taskdb_obj.disable(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'tid': item['uuid'],  "status": taskdb_obj.STATUS_DISABLE})
+                    {'tid': item['uuid'], "mode": item['type'], "status": taskdb_obj.STATUS_DISABLE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
