@@ -29,18 +29,19 @@ def keyword_add():
     if request.method=='GET':
         return render_template('/keyword/add.html')
     else:
-        word=request.form.get('word')
+        arr = request.form.get('word').split('\r\n')
         keyworddb_obj = app.config.get('db')["KeywordsDB"]
-        dic={
-            'word': word,
-            'src_txt':'后台',
-            'creator':'admin',
-            'updator':'admin'
-        }
         try:
-            kwid = keyworddb_obj.insert(dic)
-            app.config['newtask']({'mode': 'search', 'kid': kwid})
-            app.config['newtask']({'mode': 'site-search', 'kid': kwid})
+            for word in arr:
+                dic={
+                    'word': word,
+                    'src_txt':'后台',
+                    'creator':'admin',
+                    'updator':'admin'
+                }
+                kwid = keyworddb_obj.insert(dic)
+                app.config['newtask']({'mode': 'search', 'kid': kwid})
+                app.config['newtask']({'mode': 'site-search', 'kid': kwid})
             return redirect('/keyword/list')
         except Exception as e:
             return render_template('/error.html', message=str(e))
