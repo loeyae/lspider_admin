@@ -207,7 +207,7 @@ def urls_disable(id):
         ret=urls_obj.disable(id)
         if ret:
             app.config['status'](
-                {'urlid': id, 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
+                {'uid': id, 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -233,7 +233,7 @@ def urls_list_disable():
             ret=urls_obj.disable(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'urlid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
+                    {'uid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_DISABLE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -309,7 +309,7 @@ def urls_active(id):
         ret=urls_obj.active(id)
         if ret:
             app.config['status'](
-                {'urlid': id, 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
+                {'uid': id, 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -337,7 +337,7 @@ def urls_list_active():
             ret=urls_obj.active(item['uuid'])
             if ret:
                 app.config['status'](
-                    {'urlid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
+                    {'uid': item['uuid'], 'mode': task_info['type'], "status": urls_obj.STATUS_ACTIVE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
