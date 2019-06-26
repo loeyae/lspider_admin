@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import traceback
+from pymongo.errors import *
 from flask import request, render_template, redirect, jsonify
 try:
     import flask_login as login
@@ -39,9 +40,12 @@ def keyword_add():
                     'creator':'admin',
                     'updator':'admin'
                 }
-                kwid = keyworddb_obj.insert(dic)
-                app.config['newtask']({'mode': 'search', 'kid': kwid})
-                app.config['newtask']({'mode': 'site-search', 'kid': kwid})
+                try:
+                    kwid = keyworddb_obj.insert(dic)
+                    app.config['newtask']({'mode': 'search', 'kid': kwid})
+                    app.config['newtask']({'mode': 'site-search', 'kid': kwid})
+                except DuplicateKeyError:
+                    continue
             return redirect('/keyword/list')
         except Exception as e:
             return render_template('/error.html', message=str(e))
