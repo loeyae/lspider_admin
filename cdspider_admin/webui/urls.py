@@ -133,7 +133,7 @@ def urls_list_enable():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
-        url_list = urls_obj.get_list(where={'uid': arr, 'status': urls_obj.STATUS_DISABLE, 'tid': int(tid)})
+        url_list = urls_obj.get_list(where={'uuid': arr, 'status': urls_obj.STATUS_DISABLE, 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
             ret=urls_obj.enable(item['uuid'])
@@ -177,7 +177,7 @@ def urls_list_delete():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
-        url_list = urls_obj.get_list(where={'uid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE, urls_obj.STATUS_DISABLE], 'tid': int(tid)})
+        url_list = urls_obj.get_list(where={'uuid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE, urls_obj.STATUS_DISABLE], 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
             ret=urls_obj.delete(item['uuid'])
@@ -224,7 +224,7 @@ def urls_list_disable():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
-        url_list = urls_obj.get_list(where={'uid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE], 'tid': int(tid)})
+        url_list = urls_obj.get_list(where={'uuid': arr, 'status': [urls_obj.STATUS_INIT, urls_obj.STATUS_ACTIVE], 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
             ret=urls_obj.disable(item['uuid'])
@@ -328,7 +328,7 @@ def urls_list_active():
         arr = ids.split(',')
         arr = [int(k) for k in arr]
         urls_obj = app.config.get('db')["UrlsDB"]
-        url_list = urls_obj.get_list(where={'uid': arr, 'status': urls_obj.STATUS_INIT, 'ruleStatus': urls_obj.STATUS_ACTIVE, 'tid': int(tid)})
+        url_list = urls_obj.get_list(where={'uuid': arr, 'status': urls_obj.STATUS_INIT, 'ruleStatus': urls_obj.STATUS_ACTIVE, 'tid': int(tid)})
         i = 0
         for item in iterator2list(url_list):
             ret=urls_obj.active(item['uuid'])
