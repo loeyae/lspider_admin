@@ -299,11 +299,9 @@ def task_update(tid):
             if not task:
                 return jsonify({"status": 500, "message": "无效的任务。"})
             data = request.form.to_dict()
-            data['status'] = taskdb_obj.STATUS_INIT
             ret = taskdb_obj.update(tid, data)
             if ret:
-                app.config['status'](
-                    {'tid': tid, 'mode': task['type'], "status": taskdb_obj.STATUS_INIT})
+                return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:
             app.logger.error(traceback.format_exc())
