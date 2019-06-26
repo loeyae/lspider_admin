@@ -101,7 +101,7 @@ def keyword_list_del():
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
         arr = ids.split(',')
         arr = [int(k) for k in arr]
-        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE, keyworddb_obj.STATUS_DISABLE]})
+        project_list = keyworddb_obj.get_list(where={'uuid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE, keyworddb_obj.STATUS_DISABLE]})
         i = 0
         for item in list(project_list):
             ret=keyworddb_obj.delete(item['uuid'])
@@ -147,7 +147,7 @@ def keyword_list_disable():
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
         arr = ids.split(',')
         arr = [int(k) for k in arr]
-        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_ACTIVE]})
+        project_list = keyworddb_obj.get_list(where={'uuid': arr, 'status': [keyworddb_obj.STATUS_ACTIVE]})
         i = 0
         for item in list(project_list):
             ret=keyworddb_obj.disable(item['uuid'])
@@ -207,7 +207,7 @@ def keyword_list_active():
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
         arr = ids.split(',')
         arr = [int(k) for k in arr]
-        project_list = keyworddb_obj.get_list(where={'pid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_DISABLE]})
+        project_list = keyworddb_obj.get_list(where={'uuid': arr, 'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_DISABLE]})
         i = 0
         for item in list(project_list):
             ret=keyworddb_obj.active(item['uuid'])
