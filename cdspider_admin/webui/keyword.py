@@ -74,6 +74,11 @@ def keyword_del(id):
         if not id or not keyword_info:
             return jsonify({"status": 500, "message": "无效的关键词！", "error": "error"})
         ret=keyworddb_obj.delete(id)
+        if ret:
+            app.config['status'](
+                {'kid': id, "mode": 'search', "status": keyworddb_obj.STATUS_DELETED})
+            app.config['status'](
+                {'kid': id, "mode": 'site-search', "status": keyworddb_obj.STATUS_DELETED})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -89,6 +94,10 @@ def keyword_disable(id):
             return jsonify({"status": 500, "message": "无效的关键词！", "error": "error"})
         ret=keyworddb_obj.disable(id)
         if ret:
+            app.config['status'](
+                {'kid': id, "mode": 'search', "status": keyworddb_obj.STATUS_DISABLE})
+            app.config['status'](
+                {'kid': id, "mode": 'site-search', "status": keyworddb_obj.STATUS_DISABLE})
             return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())

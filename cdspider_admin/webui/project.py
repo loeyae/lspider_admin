@@ -88,7 +88,7 @@ def project_delete(id):
         projectdb_obj = app.config.get('db')["ProjectsDB"]
         ret=projectdb_obj.delete(id)
         if ret:
-            app.config['status']({'projectid': id, "status": projectdb_obj.STATUS_DELETED})
+            app.config['status']({'pid': id, "status": projectdb_obj.STATUS_DELETED})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -101,7 +101,7 @@ def project_disable(id):
         projectdb_obj = app.config.get('db')["ProjectsDB"]
         ret=projectdb_obj.disable(id)
         if ret:
-            app.config['status']({'projectid': id, "status": projectdb_obj.STATUS_DISABLE})
+            app.config['status']({'pid': id, "status": projectdb_obj.STATUS_DISABLE})
         return jsonify({"status": 200, "message": "Ok", "data": {"id": id}})
     except Exception as e:
         app.logger.error(traceback.format_exc())
@@ -145,7 +145,7 @@ def project_list_delete():
         for item in list(project_list):
             ret = projectdb_obj.delete(item['pid'])
             if ret:
-                app.config['status']({'projectid': item['pid'], "status": projectdb_obj.STATUS_DELETED})
+                app.config['status']({'pid': item['pid'], "status": projectdb_obj.STATUS_DELETED})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -169,8 +169,6 @@ def project_list_active():
         i = 0
         for item in list(project_list):
             ret = projectdb_obj.active(item['pid'])
-            if ret:
-                app.config['status']({'projectid': item['pid'], "status": projectdb_obj.STATUS_ACTIVE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -195,7 +193,7 @@ def project_list_disable():
         for item in list(project_list):
             ret = projectdb_obj.disable(item['pid'])
             if ret:
-                app.config['status']({'projectid': item['pid'], "status": projectdb_obj.STATUS_DISABLE})
+                app.config['status']({'pid': item['pid'], "status": projectdb_obj.STATUS_DISABLE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
@@ -219,8 +217,6 @@ def project_list_enable():
         i = 0
         for item in list(project_list):
             ret = projectdb_obj.enable(item['pid'])
-            if ret:
-                app.config['status']({'projectid': item['pid'], "status": projectdb_obj.STATUS_ENABLE})
             i += 1
         if i == 0:
             return jsonify({"status": 400, "message": "Ok", "data": {"id": ids}})
