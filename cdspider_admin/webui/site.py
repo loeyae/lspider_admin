@@ -295,11 +295,9 @@ def site_update(sid):
             if not site:
                 return jsonify({"status": 500, "message": "无效的站点。"})
             data = request.form.to_dict()
-            data['status'] = sitedb_obj.STATUS_INIT
             ret = sitedb_obj.update(sid, data)
             if ret:
-                app.config['status'](
-                    {'sid': sid, "status": sitedb_obj.STATUS_INIT})
+                return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:
             app.logger.error(traceback.format_exc())
