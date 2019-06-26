@@ -299,7 +299,7 @@ def site_update(sid):
             ret = sitedb_obj.update(sid, data)
             if ret:
                 app.config['status'](
-                    {'sid': sid, 'pid': project['uuid'], "status": sitedb_obj.STATUS_INIT})
+                    {'sid': sid, "status": sitedb_obj.STATUS_INIT})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:
             app.logger.error(traceback.format_exc())
