@@ -57,7 +57,6 @@ def keyword_upd(id):
             word=request.form.get('word')
             dic = {
                 'word': word,
-                'status': keyworddb_obj.STATUS_INIT
             }
             keyworddb_obj = app.config.get('db')["KeywordsDB"]
             ret = keyworddb_obj.update(id, dic)
