@@ -22,7 +22,7 @@
               <div class="form-group">
                 <label class="col-lg-3 control-label">关键词</label>
                 <div class="col-lg-8">
-                  <input type="text" name="word" placeholder="关键词" class="form-control" data-parsley-required="true" data-parsley-length="[2,32]">
+                    <textarea  name="word" placeholder="多个关键词，通过回车分割，例如：关键词1{{ '\r\n' }}关键词二" class="form-control" data-parsley-required="true" data-parsley-multiple-of data-parsley-trigger="focusout"></textarea>
                 </div>
               </div>
               <div class="form-group">
@@ -47,6 +47,26 @@
 <script src="{{ url_for('static', filename='js/parsley/zh_cn.extra.js') }}"></script>
 <script>
 $(function(){
+   window.Parsley
+  .addValidator('multipleOf', {
+    validateString: function(value) {
+      var words = value.split(/(\r\n|\n|\r)/)
+      var ret = true
+      for (var word in words){
+          if (word == '\r' || word == '\n') {
+              continue
+          }
+          if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2, 32)) {
+              return false
+          }
+      }
+      return ret
+    },
+    messages: {
+      "zh-cn": '请填写2-32个字符的关键词'
+    }
+  });
+  $(function(){
     $("[name=reset]").click(function(){
         $(this).parent("form").reset()
     })
