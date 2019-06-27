@@ -322,48 +322,214 @@ $(document).ready(function() {
 		} );
 	});
 
-        $(document).on('click', '[data-ride="add-parse-rule"]', function(e){
-            var $input = $(e.target).parents('.input-group').find(':input')
-            var $target = $($(e.target).data('target'))
-            var $column = $(e.target).data('column');
-            var _v = $input.val()
-            if (_v) {
-                var pre_custom_columns = _v.split("\n")
-                var _html = '';
-                for (var idx in pre_custom_columns) {
-                    var item = pre_custom_columns[idx];
-                    var s = item.split("|");
-                    var k = s[0];
-                    var v = s[1] ? s[1] : '自定义字段';
-                    _html += '<div class="form-group" id="'+ $column +'-column-'+ k +'">'+
-                            '<input type="hidden" name="'+ $column +'-name-'+ k +'" value="'+ v +'" />'+
-                            '<label class="col-lg-2 control-label">'+ v +'识别规则</label>'+
-                            '<div class="col-lg-9 input-group dropdown combobox m-b">'+
-                                '<div class="input-group-btn">'+
-                                     '<button type="button" class="btn btn-small btn-white dropdown-toggle" data-toggle="dropdown"><i class="caret"></i></button>'+
-                                     '<ul class="dropdown-menu pull-right">'+
-                                         '<li data-value="@value:"><a href="#">固定值</a></li>'+
-                                         '<li data-value="@xpath:"><a href="#">XPATH选择器</a></li>'+
-                                         '<li data-value="@css:"><a href="#">CSS选择器</a></li>'+
-                                         '<li data-value="@url:"><a href="#">匹配URL</a></li>'+
-                                         '<li data-value="@reg:"><a href="#">正则表达式</a></li>'+
-                                         '<li data-value="@json:"><a href="#">JSON表达式</a></li>'+
-                                     '</ul>'+
-                                '</div>'+
-                                '<input type="text" name="'+ $column +'-'+ k +'" placeholder="" class="form-control" />'+
-                                '<span class="input-group-btn"><a href="#'+ $column +'-column-'+ k +'" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>'+
+    $(document).on('click', '[data-ride="add-parse-rule"]', function(e){
+        var $input = $(e.target).parents('.input-group').find(':input')
+        var $target = $($(e.target).data('target'))
+        var $column = $(e.target).data('column');
+        var _v = $input.val()
+        if (_v) {
+            var pre_custom_columns = _v.split("\n")
+            var _html = '';
+            for (var idx in pre_custom_columns) {
+                var item = pre_custom_columns[idx];
+                var s = item.split("|");
+                var k = s[0];
+                var v = s[1] ? s[1] : '自定义字段';
+                _html += '<div class="form-group" id="'+ $column +'-column-'+ k +'">'+
+                        '<input type="hidden" name="'+ $column +'-name-'+ k +'" value="'+ v +'" />'+
+                        '<label class="col-lg-2 control-label">'+ v +'识别规则</label>'+
+                        '<div class="col-lg-9 input-group dropdown combobox m-b">'+
+                            '<div class="input-group-btn">'+
+                                 '<button type="button" class="btn btn-small btn-white dropdown-toggle" data-toggle="dropdown"><i class="caret"></i></button>'+
+                                 '<ul class="dropdown-menu pull-right">'+
+                                     '<li data-value="@value:"><a href="#">固定值</a></li>'+
+                                     '<li data-value="@xpath:"><a href="#">XPATH选择器</a></li>'+
+                                     '<li data-value="@css:"><a href="#">CSS选择器</a></li>'+
+                                     '<li data-value="@url:"><a href="#">匹配URL</a></li>'+
+                                     '<li data-value="@reg:"><a href="#">正则表达式</a></li>'+
+                                     '<li data-value="@json:"><a href="#">JSON表达式</a></li>'+
+                                 '</ul>'+
                             '</div>'+
-                            '<label class="col-lg-2 control-label">'+ v +'提取规则</label>'+
-                            '<div class="col-lg-9 input-group">'+
-                                '<input type="text" name="'+ $column +'-'+ k +'-extract" placeholder="" class="form-control" />'+
-                            '</div>'+
-                        '</div>';
-                }
-                $target.append(_html)
+                            '<input type="text" name="'+ $column +'-'+ k +'" placeholder="" class="form-control" />'+
+                            '<span class="input-group-btn"><a href="#'+ $column +'-column-'+ k +'" data-dismiss="alert" class="btn btn-white btn-mini"><i class="icon-trash text-muted"></i>删除</a></span>'+
+                        '</div>'+
+                        '<label class="col-lg-2 control-label">'+ v +'提取规则</label>'+
+                        '<div class="col-lg-9 input-group">'+
+                            '<input type="text" name="'+ $column +'-'+ k +'-extract" placeholder="" class="form-control" />'+
+                        '</div>'+
+                    '</div>';
             }
-            else {
-                alert("请添加自定义解析字段")
-            }
+            $target.append(_html)
+        }
+        else {
+            alert("请添加自定义解析字段")
+        }
 	});
+	$(document).on('click', '[data-ride="test-list-rule"]', function(e){
+	    var $this = $(e.target);
+        var prefix = $(e.target).data('prefix');
+        var rule = $("[name="+ prefix +"-rule]").val();
+        var url = $("[name="+ prefix +"-url]").val();
+        var keyword = $("[name="+ prefix +"-keyword]").val();
+        var page = $(e.target).data('page');
+        var $pane = $("#"+ prefix +"-pane")
+        var $error = $("#"+ prefix +"-error")
+        var $out = $("#"+ prefix +"-out")
+        var $next_url = $("#"+ prefix +"-next-url")
+        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&page='+ page +'&keyword='+keyword+'&url='+ encodeURIComponent(url)
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/run',
+            data: data,
+            beforeSend: function(){
+                $pane.html('')
+                $error.html('')
+                $out.html('')
+                $next_url.html('')
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
+                $("#load").button('loading')
+            },
+            success: function(result){
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                if (result.status == 200) {
+                    if (result.result) {
+                        var list = result.result[0]
+                        var error = result.result[1]
+                        var save = result.result[4]
+                        if (list && list.list){
+                            var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
+                            for (var idx in list.list) {
+                                var item = list.list[idx];
+                                txt += '<div class="col-lg-6"><div class="col-lg-9" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="'+ item['url'] +'" title="'+ item['url'] +'" target="_blank">'
+                                if (item['title']) {
+                                    txt += item['title'];
+                                } else {
+                                    txt += item['url'];
+                                }
+                            }
+                            txt += '</div>'
+                            $pane.html(txt)
+                            if (save && save["next_url"]){
+                                $next.html(save["next_url"])
+                                $this.text("下一页").data('page', save["page"]))
+                            }
+                        }
+                        if (error) {
+                            if ($this.text() == "下一页") {
+                                $this.text("测试").data('page', 1)
+                            }
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        } else if (!list.list) {
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                        }
+                        var stdout = result.stdout
+                        $(out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    } else {
+                        alert('请求未成功！')
+                    }
+                } else{
+                    if (result.result) {
+                        var error = result.result[1]
+                        if (error) {
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        }
+                    }
+                    var stdout = result.stdout
+                    $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    return false
+                }
+            },
+            error: function(){
+                alert('请求失败。')
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                return false
+            }
+        });
+	});
+	$(document).on('click', '[data-ride="test-parser-rule"]', function(e){
+        var prefix = $(e.target).data('prefix');
+        var rule = $("[name="+ prefix +"-rule]").val();
+        var url = $("[name="+ prefix +"-url]").val();
+        var $pane = $("#"+ prefix +"-pane")
+        var $error = $("#"+ prefix +"-error")
+        var $out = $("#"+ prefix +"-out")
+        var $next_url = $("#"+ prefix +"-next-url")
+        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&url='+ encodeURIComponent(url)
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/run',
+            data: data,
+            beforeSend: function(){
+                $pane.html('')
+                $error.html('')
+                $out.html('')
+                $next_url.html('')
+                $("#myModal").addClass('modal-open')
+                $(".modal-body button").button('loading')
+            },
+            success: function(result){
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                if (result.status == 200) {
+                    if (result.result) {
+                        var list = result.result[0]
+                        var error = result.result[1]
+                        var save = result.result[4]
+                        if (list){
+                            var txt = '<table>'
+                            for (var key in list) {
+                                for (var idx in list[key]) {
+                                    if (typeof(list[key][idx]) == 'object') {
+                                        for (var k in list[key][idx]) {
+                                            var item = list[key][idx][k]
+                                            txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                        }
+                                    } else {
+                                        var item = list[key][idx]
+                                        txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                    }
+                                }
+                            }
+                            txt += '</table>'
+                            $pane.html(txt)
+                            if (save && save["next_url"]){
+                                $next.html(save["next_url"])
+                                $this.text("下一页").data('page', save["page"]))
+                            }
+                        }
+                        if (error) {
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        } else if (!list.item) {
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                        }
+                        var stdout = result.stdout
+                        $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                    } else {
+                        alert('请求未成功！')
+                    }
+                } else{
+                    if (result.result) {
+                        var error = result.result[1]
+                        if (error) {
+                            $error.html('<pre>'+error+'</pre>')
+                        }
+                    }
+                    var stdout = result.stdout
+                    $out.html('<pre>'+ stdout +'</pre>')
+                    return false
+                }
+            },
+            error: function(){
+                alert('请求失败。')
+                $("#load").button('reset')
+                $("#modal-close").trigger('click')
+                return false
+            }
+        });
+    })
 
 });
