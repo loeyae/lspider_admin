@@ -398,10 +398,10 @@ $(document).ready(function() {
                         var list = result.result['parsed']
                         var error = result.result['errmsg']
                         var save = result.result['save']
-                        if (list && list.list){
+                        if (list){
                             var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
-                            for (var idx in list.list) {
-                                var item = list.list[idx];
+                            for (var idx in list) {
+                                var item = list[idx];
                                 txt += '<div class="col-lg-6"><div class="col-lg-9" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="'+ item['url'] +'" title="'+ item['url'] +'" target="_blank">'
                                 if (item['title']) {
                                     txt += item['title'];
