@@ -272,6 +272,7 @@ def task_add():
             data = request.form.to_dict()
             data['pid'] = site_info['pid']
             data['sid'] = int(sid)
+            data['status'] = taskdb_obj.STATUS_ACTIVE
 
             sid = taskdb_obj.insert(data)
             if not sid or not site_info:

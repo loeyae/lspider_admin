@@ -268,6 +268,7 @@ def site_add():
             subdomain = typeinfo['subdomain']
             data['domain'] = domain
             data['subdomain'] = subdomain
+            data['status'] = sitedb_obj.STATUS_ACTIVE
 
             sid = sitedb_obj.insert(data)
             if not sid:

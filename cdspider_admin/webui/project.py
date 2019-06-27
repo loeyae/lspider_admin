@@ -48,6 +48,7 @@ def project_add():
         try:
             projectdb_obj = app.config.get('db')["ProjectsDB"]
             data = request.form.to_dict()
+            data['status'] = projectdb_obj.STATUS_ACTIVE
             pid = projectdb_obj.insert(data)
 
             return jsonify({"status": 200, "message": "Ok", "data": {"id": pid}})

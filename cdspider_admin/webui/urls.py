@@ -39,8 +39,8 @@ def urls_add():
     task_info = task_obj.get_detail(tid)
     if not tid or not task_info:
         return render_template('error.html', message="无效的任务")
+    listruledb = app.config.get('db')['ListRuleDB']
     if request.method=='GET':
-        listruledb = app.config.get('db')['ListRuleDB']
         listrule = listruledb.get_list({"tid": int(tid)})
         app_config = app.config.get('app_config')
         return render_template('/urls/add.html', app_config=app_config, task_info=task_info, rule_list=listrule,
@@ -52,18 +52,20 @@ def urls_add():
             arr = request.form.get('url').split('\r\n')
             frequency = request.form.get('frequency')
             urls_obj = app.config.get('db')["UrlsDB"]
+            rule = listruledb.get_detail(ruleId)
+            ruleStatus = listruledb.STATUS_ACTIVE if rule and rule['status'] == listruledb.STATUS_ACTIVE else listruledb.STATUS_INIT
             for item in arr:
                 l = item.split("|")
                 dic = {
                     'title': title if len(l) < 2 else l[1],
                     'url': l[0],
-                    'status': urls_obj.STATUS_INIT,
                     'pid': task_info['pid'],
                     'sid': task_info['sid'],
                     'tid': int(tid),
                     'ruleId': int(ruleId),
                     'frequency': frequency,
-                    'ruleStatus': urls_obj.STATUS_INIT,
+                    'status': urls_obj.STATUS_ACTIVE,
+                    'ruleStatus': ruleStatus,
                 }
                 uid = urls_obj.insert(dic)
                 if uid:
