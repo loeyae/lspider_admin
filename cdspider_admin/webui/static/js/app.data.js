@@ -395,9 +395,9 @@ $(document).ready(function() {
                 $("#modal-close").trigger('click')
                 if (result.status == 200) {
                     if (result.result) {
-                        var list = result.result[0]
-                        var error = result.result[1]
-                        var save = result.result[4]
+                        var list = result.result['parsed']
+                        var error = result.result['errmsg']
+                        var save = result.result['save']
                         if (list && list.list){
                             var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
                             for (var idx in list.list) {
@@ -424,8 +424,10 @@ $(document).ready(function() {
                         } else if (!list.list) {
                             $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
-                        var stdout = result.stdout
-                        $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        var stdout = result.result['stdout']
+                        if (stdout) {
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        }
                     } else {
                         alert('请求未成功！')
                     }
@@ -435,9 +437,11 @@ $(document).ready(function() {
                         if (error) {
                             $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
                         }
+                        var stdout = result.stdout
+                        if (stdout) {
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        }
                     }
-                    var stdout = result.stdout
-                    $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
                     return false
                 }
             },
@@ -476,9 +480,10 @@ $(document).ready(function() {
                 $("#modal-close").trigger('click')
                 if (result.status == 200) {
                     if (result.result) {
-                        var list = result.result[0]
-                        var error = result.result[1]
-                        var save = result.result[4]
+                    //{"parsed": parsed, "broken_exc": broken_exc, "source": last_source, "url": final_url, "save": save, "stdout": output, "errmsg": errmsg}
+                        var list = result.result['parsed']
+                        var error = result.result['errmsg']
+                        var save = result.result['save']
                         if (list){
                             var txt = '<table>'
                             for (var key in list) {
@@ -506,20 +511,24 @@ $(document).ready(function() {
                         } else if (!list.item) {
                             $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
-                        var stdout = result.stdout
-                        $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        var stdout = result.result['stdout']
+                        if (stdout) {
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        }
                     } else {
                         alert('请求未成功！')
                     }
                 } else{
                     if (result.result) {
-                        var error = result.result[1]
+                        var error = result.result['errmsg']
                         if (error) {
-                            $error.html('<pre>'+error+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                        }
+                        var stdout = result.result['stdout']
+                        if (stdout) {
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
                         }
                     }
-                    var stdout = result.stdout
-                    $out.html('<pre>'+ stdout +'</pre>')
                     return false
                 }
             },
