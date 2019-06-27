@@ -99,45 +99,18 @@ def runtask():
     if fetch is None or gtask is None:
         return json.dumps({})
 
+
     data = request.form.to_dict()
-    dmode = data.pop('dmode', 'list')
     task = {
-            "mode": dmode,
-            "status": 1,
-            "projectid": int(data['projectid']),
-            "siteid": int(data['siteid']),
-            "save": {}
+            "return_result": True,
+            "mode": data['mode'],
+            "url": data['url'],
+            "rule": int(data['rule']),
+            "save": {"current_page": data.get("page", 1)}
         }
-    if "url" in data and data['url']:
-        task['save']['base_url'] = data['url']
-    urlsid = int(data.get('urlid', 0))
-    if urlsid:
-        task.update({
-            "urlid": urlsid,
-            })
-    attachid = int(data.get('attachid', 0))
-    if attachid:
-        task.update({
-            "atid": attachid,
-            })
-    keywordsid = int(data.get('keywordid', 0))
-    if keywordsid:
-        task.update({'kwid': keywordsid})
 
     try:
-        task = gtask(({'pid': task['projectid']}, task))
-        if 'save' in data:
-            save = json.loads(data['save'])
-            if 'incr_data' in save:
-                for i in range(len(save['incr_data'])):
-                    save['incr_data'][i]['first'] = False
-                task['save']['incr_data'] = save['incr_data']
-
-        if 'attachment' in task and task['attachment']:
-#            task['attachment']['main_process']['actions']['crawl']['url'] = data['url']
-            task['url'] = data['url']
-        else:
-            task['url'] = task.get('urls', {}).get('url', task.get('site', {}).get('url'))
+        task = gtask(task)
         ret = list(fetch(task))
         if ret[0] and 'list' in ret[0]:
             for item in ret[0]['list']:
