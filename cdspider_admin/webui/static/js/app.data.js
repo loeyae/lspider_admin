@@ -425,7 +425,7 @@ $(document).ready(function() {
                             $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         var stdout = result.stdout
-                        $(out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                        $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
                     } else {
                         alert('请求未成功！')
                     }
