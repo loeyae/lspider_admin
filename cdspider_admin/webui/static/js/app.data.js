@@ -413,7 +413,7 @@ $(document).ready(function() {
                             $pane.html(txt)
                             if (save && save["next_url"]){
                                 $next.html(save["next_url"])
-                                $this.text("下一页").data('page', save["page"]))
+                                $this.text("下一页").data('page', save["page"])
                             }
                         }
                         if (error) {
