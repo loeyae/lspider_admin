@@ -91,9 +91,6 @@ def queues():
 
 @app.route('/run', methods=['POST',])
 def runtask():
-    r_obj=__redirection__()
-    sys.stdout=r_obj
-
     fetch = app.config.get('fetch')
     gtask = app.config.get('task')
     if fetch is None or gtask is None:
@@ -112,39 +109,15 @@ def runtask():
 
     try:
         task = gtask(task)
-        ret = list(fetch(task))
-        if ret[0] and 'list' in ret[0]:
-            for item in ret[0]['list']:
-                if 'url' in item:
-                    item['url'] = urljoin(task['save']['base_url'], item['url'])
-        elif ret[0] and 'item' in ret[0]:
-            for k in ret[0]:
-                item = ret[0][k]
-                if isinstance(item, dict):
-                    if k != 'item':
-                        item.pop('title', None)
-                        item.pop('created', None)
-                        item.pop('author', None)
-                        item.pop('content', None)
-                        item.pop('raw_content', None)
-                    item.pop('raw_title', None)
-                for _k in item:
-                    if isinstance(item[_k], str):
-                        item[_k] = cgi.escape(item[_k])
-                    else:
-                        item[_k] = json.dumps(item[_k])
-
-        if ret[1]:
-            ret[1] = re.sub('[\r\n]+', '<br />', '\r\n'.join(ret[1]) if isinstance(ret[1], (list, tuple)) else str(ret[1]))
-        if ret[4]:
-            ret[4] = json.dumps(ret[4])
+        ret = json.loads(fetch(task))
     except socket.error as e:
         app.logger.warning('connect to fetcher rpc error: %r', e)
-        return json.dumps({"result": None, "status": 500, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"result": None, "status": 500}), 200, {'Content-Type': 'application/json'}
     except:
         app.logger.warning('fetcher error: %r', traceback.format_exc())
-        return json.dumps({"result": (None, traceback.format_exc(), None, None, None), "status": 500, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
-    return json.dumps({"result": ret, "status": 200, 'stdout': sys.stdout.read()}), 200, {'Content-Type': 'application/json'}
+        return json.dumps({"result":
+        {"parsed": None, "broken_exc": None, "source": None, "url": None, "save": None, "stdout": None, "errmsg": traceback.format_exc()}, "status": 500}), 200, {'Content-Type': 'application/json'}
+    return json.dumps({"result": ret, "status": 200}), 200, {'Content-Type': 'application/json'}
 
 
 @app.route('/robots.txt')
