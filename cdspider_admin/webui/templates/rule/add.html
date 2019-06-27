@@ -121,8 +121,17 @@
                                                placeholder="http://sample.com">
                                     </div>
                                 </div>
+                                {% if task_info['type'] == "search" or task_info['type'] == "site-search" %}
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">测试URL</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" name="script-test-keyword" id="script-test-keyword" value=""
+                                               placeholder="关键词">
+                                    </div>
+                                </div>
+                                {% endif %}
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label"></label>
                                     <div class="col-lg-10">
                                         <input type="hidden" name="script-test-rule" value="">
                                         <button type="button" name="script-test" data-ride="test-list-rule"

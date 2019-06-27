@@ -116,7 +116,7 @@ def runtask():
     except:
         app.logger.warning('fetcher error: %r', traceback.format_exc())
         return json.dumps({"result":
-        {"parsed": None, "broken_exc": None, "source": None, "url": None, "save": None, "stdout": None, "errmsg": traceback.format_exc()}, "status": 500}), 200, {'Content-Type': 'application/json'}
+        {"parsed": None, "broken_exc": traceback.format_exc(), "source": None, "url": None, "save": None, "stdout": None, "errmsg": None}, "status": 500}), 200, {'Content-Type': 'application/json'}
     return json.dumps({"result": ret, "status": 200}), 200, {'Content-Type': 'application/json'}
 
 

@@ -396,7 +396,7 @@ $(document).ready(function() {
                 if (result.status == 200) {
                     if (result.result) {
                         var list = result.result['parsed']
-                        var error = result.result['errmsg']
+                        var error = result.result['broken_exc']
                         var save = result.result['save']
                         if (list){
                             var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
@@ -422,11 +422,11 @@ $(document).ready(function() {
                             if ($this.text() == "下一页") {
                                 $this.text("测试").data('page', 1)
                             }
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ error.replace('\r\n', "</br>") +'</pre>')
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
                         }
                     } else {
                         alert('请求未成功！')
@@ -435,11 +435,11 @@ $(document).ready(function() {
                     if (result.result) {
                         var error = result.result[1]
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
                         }
                         var stdout = result.stdout
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
                         }
                     }
                     return false
@@ -482,7 +482,7 @@ $(document).ready(function() {
                     if (result.result) {
                     //{"parsed": parsed, "broken_exc": broken_exc, "source": last_source, "url": final_url, "save": save, "stdout": output, "errmsg": errmsg}
                         var list = result.result['parsed']
-                        var error = result.result['errmsg']
+                        var error = result.result['broken_exc']
                         var save = result.result['save']
                         if (list){
                             var txt = '<table>'
@@ -509,11 +509,11 @@ $(document).ready(function() {
                             $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
                         }
                     } else {
                         alert('请求未成功！')
@@ -522,11 +522,11 @@ $(document).ready(function() {
                     if (result.result) {
                         var error = result.result['errmsg']
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
                         }
                     }
                     return false
