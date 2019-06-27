@@ -408,6 +408,7 @@ $(document).ready(function() {
                                 } else {
                                     txt += item['url'];
                                 }
+                                txt += '</a></div></div>';
                             }
                             txt += '</div>'
                             $pane.html(txt)
