@@ -372,10 +372,10 @@ $(document).ready(function() {
         var url = $("[name="+ prefix +"-url]").val();
         var keyword = $("[name="+ prefix +"-keyword]").val();
         var page = $(e.target).data('page');
-        var $pane = $("#"+ prefix +"-pane")
-        var $error = $("#"+ prefix +"-error")
-        var $out = $("#"+ prefix +"-out")
-        var $next_url = $("#"+ prefix +"-next-url")
+        var $pane = $("#"+ prefix +"-pane");
+        var $error = $("#"+ prefix +"-error");
+        var $out = $("#"+ prefix +"-out");
+        var $next_url = $("#"+ prefix +"-next-url");
         var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&page='+ page +'&keyword='+keyword+'&url='+ encodeURIComponent(url)
         $.ajax({
             type: "post",
@@ -458,11 +458,11 @@ $(document).ready(function() {
         var prefix = $(e.target).data('prefix');
         var rule = $("[name="+ prefix +"-rule]").val();
         var url = $("[name="+ prefix +"-url]").val();
-        var $pane = $("#"+ prefix +"-pane")
-        var $error = $("#"+ prefix +"-error")
-        var $out = $("#"+ prefix +"-out")
-        var $next_url = $("#"+ prefix +"-next-url")
-        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&url='+ encodeURIComponent(url)
+        var $pane = $("#"+ prefix +"-pane")；
+        var $error = $("#"+ prefix +"-error")；
+        var $out = $("#"+ prefix +"-out")；
+        var $next_url = $("#"+ prefix +"-next-url")；
+        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&url='+ encodeURIComponent(url)；
         $.ajax({
             type: "post",
             dataType: "json",
@@ -473,8 +473,8 @@ $(document).ready(function() {
                 $error.html('')
                 $out.html('')
                 $next_url.html('')
-                $("#myModal").addClass('modal-open')
-                $(".modal-body button").button('loading')
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
+                $("#load").button('loading')
             },
             success: function(result){
                 $("#load").button('reset')
@@ -487,17 +487,15 @@ $(document).ready(function() {
                         var save = result.result['save']
                         if (list){
                             var txt = '<table>'
-                            for (var key in list) {
-                                for (var idx in list[key]) {
-                                    if (typeof(list[key][idx]) == 'object') {
-                                        for (var k in list[key][idx]) {
-                                            var item = list[key][idx][k]
-                                            txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
-                                        }
-                                    } else {
-                                        var item = list[key][idx]
-                                        txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                            for (var idx in list) {
+                                if (typeof(list[idx]) == 'object') {
+                                    for (var k in list[idx]) {
+                                        var item = list[idx][k]
+                                        txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
                                     }
+                                } else {
+                                    var item = list[idx]
+                                    txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
                                 }
                             }
                             txt += '</table>'
