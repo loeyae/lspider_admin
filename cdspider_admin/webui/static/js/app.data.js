@@ -415,14 +415,14 @@ $(document).ready(function() {
                                 $next.html(save["next_url"])
                                 $this.text("下一页").data('page', save["page"])
                             }
+                        } else {
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         if (error) {
                             if ($this.text() == "下一页") {
                                 $this.text("测试").data('page', 1)
                             }
                             $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
-                        } else if (!list.list) {
-                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
@@ -505,11 +505,11 @@ $(document).ready(function() {
                                 $next.html(save["next_url"])
                                 $this.text("下一页").data('page', save["page"])
                             }
+                        } else {
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         if (error) {
                             $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
-                        } else if (!list.item) {
-                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
