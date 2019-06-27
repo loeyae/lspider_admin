@@ -376,28 +376,28 @@ $(document).ready(function() {
         var $error = $("#"+ prefix +"-error");
         var $out = $("#"+ prefix +"-out");
         var $next_url = $("#"+ prefix +"-next-url");
-        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&page='+ page +'&keyword='+keyword+'&url='+ encodeURIComponent(url)
+        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&page='+ page +'&keyword='+keyword+'&url='+ encodeURIComponent(url);
         $.ajax({
             type: "post",
             dataType: "json",
             url: '/run',
             data: data,
             beforeSend: function(){
-                $pane.html('')
-                $error.html('')
-                $out.html('')
-                $next_url.html('')
-                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
-                $("#load").button('loading')
+                $pane.html('');
+                $error.html('');
+                $out.html('');
+                $next_url.html('');
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()));
+                $("#load").button('loading');
             },
             success: function(result){
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
+                $("#load").button('reset');
+                $("#modal-close").trigger('click');
                 if (result.status == 200) {
                     if (result.result) {
-                        var list = result.result['parsed']
-                        var error = result.result['broken_exc']
-                        var save = result.result['save']
+                        var list = result.result['parsed'];
+                        var error = result.result['broken_exc'];
+                        var save = result.result['save'];
                         if (list){
                             var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
                             for (var idx in list) {
@@ -413,44 +413,44 @@ $(document).ready(function() {
                             txt += '</div>'
                             $pane.html(txt)
                             if (save && save["next_url"]){
-                                $next.html(save["next_url"])
-                                $this.text("下一页").data('page', save["page"])
+                                $next.html(save["next_url"]);
+                                $this.text("下一页").data('page', save["page"]);
                             }
                         } else {
-                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>');
                         }
                         if (error) {
                             if ($this.text() == "下一页") {
-                                $this.text("测试").data('page', 1)
+                                $this.text("测试").data('page', 1);
                             }
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ error.replace('\r\n', "</br>") +'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ error.replace('\r\n', "</br>") +'</pre>');
                         }
                         var stdout = result.result['stdout']
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>');
                         }
                     } else {
-                        alert('请求未成功！')
+                        alert('请求未成功！');
                     }
                 } else{
                     if (result.result) {
-                        var error = result.result[1]
+                        var error = result.result["broken_exc"];
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>');
                         }
-                        var stdout = result.stdout
+                        var stdout = result.result['stdout'];
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>');
                         }
                     }
-                    return false
+                    return false;
                 }
             },
             error: function(){
-                alert('请求失败。')
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                return false
+                alert('请求失败。');
+                $("#load").button('reset');
+                $("#modal-close").trigger('click');
+                return false;
             }
         });
 	});
@@ -458,84 +458,84 @@ $(document).ready(function() {
         var prefix = $(e.target).data('prefix');
         var rule = $("[name="+ prefix +"-rule]").val();
         var url = $("[name="+ prefix +"-url]").val();
-        var $pane = $("#"+ prefix +"-pane")；
-        var $error = $("#"+ prefix +"-error")；
-        var $out = $("#"+ prefix +"-out")；
-        var $next_url = $("#"+ prefix +"-next-url")；
-        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&url='+ encodeURIComponent(url)；
+        var $pane = $("#"+ prefix +"-pane");
+        var $error = $("#"+ prefix +"-error");
+        var $out = $("#"+ prefix +"-out");
+        var $next_url = $("#"+ prefix +"-next-url");
+        var data = 'rule='+ rule + '&mode='+ $(e.target).data('mode') +'&url='+ encodeURIComponent(url);
         $.ajax({
             type: "post",
             dataType: "json",
             url: '/run',
             data: data,
             beforeSend: function(){
-                $pane.html('')
-                $error.html('')
-                $out.html('')
-                $next_url.html('')
-                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
-                $("#load").button('loading')
+                $pane.html('');
+                $error.html('');
+                $out.html('');
+                $next_url.html('');
+                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()));
+                $("#load").button('loading');
             },
             success: function(result){
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
+                $("#load").button('reset');
+                $("#modal-close").trigger('click');
                 if (result.status == 200) {
                     if (result.result) {
                     //{"parsed": parsed, "broken_exc": broken_exc, "source": last_source, "url": final_url, "save": save, "stdout": output, "errmsg": errmsg}
-                        var list = result.result['parsed']
-                        var error = result.result['broken_exc']
-                        var save = result.result['save']
+                        var list = result.result['parsed'];
+                        var error = result.result['broken_exc'];
+                        var save = result.result['save'];
                         if (list){
                             var txt = '<table>'
                             for (var idx in list) {
                                 if (typeof(list[idx]) == 'object') {
                                     for (var k in list[idx]) {
-                                        var item = list[idx][k]
-                                        txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                        var item = list[idx][k];
+                                        txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>';
                                     }
                                 } else {
-                                    var item = list[idx]
-                                    txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
+                                    var item = list[idx];
+                                    txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>';
                                 }
                             }
-                            txt += '</table>'
-                            $pane.html(txt)
+                            txt += '</table>';
+                            $pane.html(txt);
                             if (save && save["next_url"]){
-                                $next.html(save["next_url"])
-                                $this.text("下一页").data('page', save["page"])
+                                $next.html(save["next_url"]);
+                                $this.text("下一页").data('page', save["page"]);
                             }
                         } else {
-                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
+                            $pane.html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>');
                         }
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>');
                         }
-                        var stdout = result.result['stdout']
+                        var stdout = result.result['stdout'];
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>');
                         }
                     } else {
-                        alert('请求未成功！')
+                        alert('请求未成功！');
                     }
                 } else{
                     if (result.result) {
-                        var error = result.result['errmsg']
+                        var error = result.result['broken_exc'];
                         if (error) {
-                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>')
+                            $error.html('<pre class="pre-scrollable" style="max-height: 100px;">'+error.replace('\r\n', "</br>")+'</pre>');
                         }
-                        var stdout = result.result['stdout']
+                        var stdout = result.result['stdout'];
                         if (stdout) {
-                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>')
+                            $out.html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout.replace('\r\n', "</br>") +'</pre>');
                         }
                     }
-                    return false
+                    return false;
                 }
             },
             error: function(){
-                alert('请求失败。')
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                return false
+                alert('请求失败。');
+                $("#load").button('reset');
+                $("#modal-close").trigger('click');
+                return false;
             }
         });
     })
