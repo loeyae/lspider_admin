@@ -105,6 +105,7 @@ def runtask():
             "return_result": True,
             "mode": data['mode'],
             "url": data['url'],
+            "keyword": {"word": data.get("keyword", None)},
             "rule": int(data['rule']),
             "save": {"current_page": data.get("page", 1)}
         }
