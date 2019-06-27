@@ -118,22 +118,27 @@
                                     <label class="col-lg-2 control-label">测试URL</label>
                                     <div class="col-lg-10">
                                         <input type="text" name="script-test-url" id="script-test-url" value=""
-                                               placeholder="为空时使用规则URL">
-                                        <button type="button" name="script-test">测试</button>
+                                               placeholder="http://sample.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">测试URL</label>
+                                    <div class="col-lg-10">
+                                        <input type="hidden" name="script-test-rule" value="{{ rule['uuid'] }}">
+                                        <button type="button" name="script-test" data-ride="test-list-rule"
+                                                data-prefix="script-test" data-mode="item" data-page="1">测试</button>
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">下一页URL</label>
                                     <div class="col-lg-10">
-                                        <div id="script-next-url-pane" class="col-lg-12 text-default"></div>
+                                        <div id="script-test-next-url" class="col-lg-12 text-default"></div>
                                     </div>
-                                    <input type="hidden" name="script-next-url" id="script-next-url" value="">
                                 </div>
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">测试结果</label>
                                     <div class="col-lg-10">
                                         <div id="script-test-pane" class="col-lg-12 text-default"></div>
-                                        <div id="script-test-item-pane" class="col-lg-12 text-default"></div>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -187,198 +192,15 @@ $(".nav li:last a").on('shown.bs.tab', function (e) {
         editor.setOption("theme", "eclipse");
     }
 })
-$('[name=script-test]').click(function(e){
-    var index = $(".nav-tabs li.active").index()
-    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
-    $step.find(':input').data('parsley-group', 'block-' + index);
-    var vr = true
-    $('.main').find('form').parsley().whenValidate({
-       group: 'block-' + index
-    }).fail(function(){
-        vr = false
-    }).done(function() {
-      vr = true
-    })
-    if (vr) {
-        var data = $step.find(':input').serialize()
-        if ($(".nav-tabs li.active a").attr("href") == '#rule-script') {
-            data += '&script='+ encodeURIComponent(editor.getValue());
-        }
-        data += '&projectid='+ $("#project-id").val() + '&ruleid='+ $("#rule-id").val() + '&dmode=list'
-        var next_url = $("#script-next-url").val()
-        if (next_url) {
-            data += '&url='+ encodeURIComponent(next_url)
-        } else {
-            data += '&url='+ encodeURIComponent($("#script-test-url").val())
-        }
-        var s = $(e.target).data('save')
-        if (s) {
-            data += '&save='+ s
-        }
-        $.ajax({
-            type: "post",
-            dataType: "json",
-            url: '/run',
-            data: data,
-            beforeSend: function(){
-                $("#script-test-pane").html('')
-                $("#script-test-error").html('')
-                $("#script-test-out").html('')
-                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
-//                .one('hide', function () {
-//                  $this.is(':visible') && $this.focus()
-//                })
-                $("#load").button('loading')
-            },
-            success: function(result){
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                if (result.status == 200) {
-                    if (result.result) {
-                        var list = result.result[0]
-                        var error = result.result[1]
-                        var save = result.result[4]
-                        if (list && list.list){
-                            var txt = '<pre class="pre-scrollable" style="max-height: 100px">'
-                            for (var idx in list.list) {
-                                var item = list.list[idx];
-                                txt += '<div class="col-lg-6"><div class="col-lg-9" style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;"><a href="'+ item['url'] +'" title="'+ item['url'] +'" target="_blank">'
-                                if (item['title']) {
-                                    txt += item['title'];
-                                } else {
-                                    txt += item['url'];
-                                }
-                                txt += '</a></div><div class="col-lg-3"><a href="javascript:void(0)" data-url="'+ item['url'] +'">验证子规则</a></div></div>';
-                            }
-                            txt += '</div>'
-                            $("#script-test-pane").html(txt)
-                            if (save && save["next_url"]){
-                                $("#script-next-url").val(save["next_url"])
-                                $("#script-next-url-pane").html(save["next_url"])
-                                $("[name=script-test]").text("下一页").data('save', encodeURIComponent('{"current_page":'+
-                                save["page"] +'}'))
-                            }
-                        } else {
-                            if ($("[name=script-test]").text() == "下一页") {
-                                $("[name=script-test]").text("测试").data('save', '')
-                            }
-                            $("#script-test-pane").html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
-                        }
-                        if (error) {
-                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
-                        }
-                        var stdout = result.stdout
-                        $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
-                    } else {
-                        alert('请求未成功！')
-                    }
-                } else{
-                    if (result.result) {
-                        var error = result.result[1]
-                        if (error) {
-                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
-                        }
-                    }
-                    var stdout = result.stdout
-                    $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
-                    return false
-                }
-            },
-            error: function(){
-                alert('请求失败。')
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                return false
-            }
-        });
+$("#list-paging-url-type").change(function() {
+    var data = $(this).val();
+    if (data == "match") {
+        $("#list-paging-url-rule").removeClass("hidden")
+    } else {
+        $("#list-paging-url-rule").addClass("hidden")
     }
 })
-$("#script-test-pane a[data-url]").live("click", function(){
-    var index = $(".nav-tabs li.active").index()
-    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
-    $step.find(':input').data('parsley-group', 'block-' + index);
-    var vr = true
-    $('.main').find('form').parsley().whenValidate({
-       group: 'block-' + index
-    }).fail(function(){
-        vr = false
-    }).done(function() {
-      vr = true
-    })
-    if (vr) {
-        var data = $step.find(':input').serialize()
-        if ($(".nav-tabs li.active a").attr("href") == '#rule-script') {
-            data += '&script='+ encodeURIComponent(editor.getValue());
-        }
-        data += '&projectid='+ $("#project-id").val() + '&ruleid='+ $("#rule-id").val() + '&dmode=item&url='+ encodeURIComponent($(this).data("url"))
-        $.ajax({
-            type: "post",
-            dataType: "json",
-            url: '/run',
-            data: data,
-            beforeSend: function(){
-                $("#script-test-item-pane").html('')
-                $("#script-test-error").html('')
-                $("#script-test-out").html('')
-                $("#myModal").modal($.extend({ remote: false }, $("#myModal").data()))
-                $("#load").button('loading')
-            },
-            success: function(result){
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                if (result.status == 200) {
-                    if (result.result) {
-                        var list = result.result[0]
-                        var error = result.result[1]
-                        if (list){
-                            var txt = '<table>'
-                            for (var key in list) {
-                                for (var idx in list[key]) {
-                                    if (typeof(list[key][idx]) == 'object') {
-                                        for (var k in list[key][idx]) {
-                                            var item = list[key][idx][k]
-                                            txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
-                                        }
-                                    } else {
-                                        var item = list[key][idx]
-                                        txt += '<tr><td>'+ idx +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>'
-                                    }
-                                }
-                            }
-                            txt += '</table>'
-                            $("#script-test-item-pane").html(txt)
-                        } else {
-                            $("#script-test-item-pane").html('<pre class="pre-scrollable" style="max-height: 100px;">未匹配到数据</pre>')
-                        }
-                        if (error) {
-                            $("#script-test-error").html('<pre class="pre-scrollable" style="max-height: 100px;">'+error+'</pre>')
-                        }
-                        var stdout = result.stdout
-                        $("#script-test-out").html('<pre class="pre-scrollable" style="max-height: 100px;">'+ stdout +'</pre>')
-                    } else {
-                        alert('请求未成功！')
-                    }
-                } else{
-                    if (result.result) {
-                        var error = result.result[1]
-                        if (error) {
-                            $("#script-test-error").html('<pre>'+error+'</pre>')
-                        }
-                    }
-                    var stdout = result.stdout
-                    $("#script-test-out").html('<pre>'+ stdout +'</pre>')
-                    return false
-                }
-            },
-            error: function(){
-                alert('请求失败。')
-                $("#load").button('reset')
-                $("#modal-close").trigger('click')
-                return false
-            }
-        });
-    }
-})
+
 $('#form_submit').click(function () {
     var index = $(".nav-tabs li.active").index()
     var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
