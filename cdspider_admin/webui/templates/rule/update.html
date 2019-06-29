@@ -86,9 +86,9 @@
                                     <label class="col-lg-2 control-label">详情页处理方式</label>
                                     <div class="col-lg-9">
                                         <select name="url_handle" class="form-control">
-                                            <option value="item" {% if rule.get('url_handle', "item") == “item” %}selected{% endif %}>同步队列处理</option>
-                                            <option value="result" {% if rule.get('url_handle', "item") == “result” %}selected{% endif %}>异步队列处理</option>
-                                            <option value="none" {% if rule.get('url_handle', "item") == “none” %}selected{% endif %}>不处理</option>
+                                            <option value="item" {% if rule.get('url_handle', "item") == "item" %}selected{% endif %}>同步队列处理</option>
+                                            <option value="result" {% if rule.get('url_handle', "item") == "result" %}selected{% endif %}>异步队列处理</option>
+                                            <option value="none" {% if rule.get('url_handle', "item") == "none" %}selected{% endif %}>不处理</option>
                                         </select>
                                     </div>
                                 </div>
