@@ -28,6 +28,30 @@
                                           data-parsley-trigger="focusout"></textarea>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">频率:</label>
+                            <div class="col-lg-9">
+                                <select name="frequency" class="form-control" data-parsley-required="true">
+                                    {% for k,v in app_config.get('frequencymap_sorted') %}
+                                    <option value={{ k }}>{{ v[1]
+                                    }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">时效:</label>
+                            <div class="col-lg-9">
+                                <select name="expire" class="form-control" data-parsley-required="true">
+                                    {% for k,v in app_config.get('expiremap_sorted') %}
+                                    <option value={{ k }}>{{ v[1]
+                                    }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-lg-9 col-offset-3">
                                 <button type="reset" name="reset" class="btn btn-white">取消</button>

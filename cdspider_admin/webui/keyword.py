@@ -37,7 +37,8 @@ def keyword_list():
 def keyword_add():
     if request.method=='GET':
         tid = int(request.args.get('tid', 0))
-        return render_template('/keyword/add.html', tid=tid)
+        app_config = app.config['app_config']
+        return render_template('/keyword/add.html', app_config=app_config, tid=tid)
     else:
         tid = request.form.get('tid', 0)
         arr = request.form.get('word').split('\r\n')
@@ -67,8 +68,8 @@ def keyword_upd(id):
     keyworddb_obj = app.config.get('db')["KeywordsDB"]
     if request.method=='GET':
         keyword_info = keyworddb_obj.get_detail(id)
-
-        return render_template('/keyword/update.html',keyword=keyword_info, id=id)
+        app_config = app.config['app_config']
+        return render_template('/keyword/update.html', app_config=app_config, keyword=keyword_info, id=id)
     else:
         try:
             word=request.form.get('word')
