@@ -13,28 +13,39 @@ from .utils.page_class import page_obj
 @app.route('/keyword/list', methods=['GET'])
 def keyword_list():
     try:
+        tid = int(request.args.get('tid', 0))
         current_page = int(request.args.get('page', 1))
         hits = int(request.args.get('hits', 10))
         keyworddb_obj=app.config.get('db')["KeywordsDB"]
-        keyword_count=keyworddb_obj.count(where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]})
+        if tid > 0:
+            keyword_count=keyworddb_obj.count(where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE],
+                                                     "$or": [{"tid": 0}, {"tid": None}, {"tid": tid}]})
+        else:
+            keyword_count=keyworddb_obj.count(where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]})
         content = page_obj.page_list(current_page, keyword_count)
-        keyword_list = keyworddb_obj.get_list(where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]}, offset=(current_page - 1) * hits, sort=[("kid", -1)])
+        if tid > 0:
+            keyword_list = keyworddb_obj.get_list(where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]}, offset=(current_page - 1) * hits, sort=[("kid", -1)])
+        else:
+            keyword_list = keyworddb_obj.get_list_by_tid(tid, where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]}, offset=(current_page - 1) * hits, sort=[("kid", -1)])
         app_config = app.config.get('app_config')
     except Exception as e:
         return render_template('/error.html', message=str(e))
-    return render_template('/keyword/list.html',keyword_list=keyword_list, content=content, app_config=app_config)
+    return render_template('/keyword/list.html', tid=tid, keyword_list=keyword_list, content=content, app_config=app_config)
 
 
 @app.route('/keyword/add', methods=['POST', 'GET'])
 def keyword_add():
     if request.method=='GET':
-        return render_template('/keyword/add.html')
+        tid = int(request.args.get('tid', 0))
+        return render_template('/keyword/add.html', tid=tid)
     else:
+        tid = request.form.get('tid', 0)
         arr = request.form.get('word').split('\r\n')
         keyworddb_obj = app.config.get('db')["KeywordsDB"]
         try:
             for word in arr:
                 dic={
+                    'tid': int(tid),
                     'word': word,
                     'src_txt':'后台',
                     'status': keyworddb_obj.STATUS_ACTIVE,

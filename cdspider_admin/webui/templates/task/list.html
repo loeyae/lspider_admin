@@ -85,6 +85,11 @@
                                         <input class="btn btn-default btn-small" name="urls-list" type="button"
                                                data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid']}}"
                                                value="URL列表" />
+                                        {% if item['type'] == "search" or item['type'] == "site-search" %}
+                                        <input class="btn btn-default btn-small" name="keyword-list" type="button"
+                                               data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid']}}"
+                                               value="关键词" />
+                                        {% endif %}
                                         <input class="btn btn-default btn-small" name="rule-list" type="button"
                                                data-tid="{{  item['uuid'] }}" data-sid="{{ item['sid']}}"
                                                value="规则列表" />
@@ -126,6 +131,9 @@
 $(function(){
     $("[name=urls-list]").click(function(){
         window.location.href = '/urls/list?tid=' + $(this).data('tid')
+    })
+    $("[name=keyword-list]").click(function(){
+        window.location.href = '/keyword/list?tid=' + $(this).data('tid')
     })
     $("[name=rule-list]").click(function(){
         window.location.href = '/rule/list?tid=' + $(this).data('tid')

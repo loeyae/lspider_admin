@@ -48,6 +48,18 @@
                 </div>
               </div>
 
+             <div class="form-group">
+                <label class="col-lg-2 control-label">时效:</label>
+                <div class="col-lg-9">
+                  <select name="expire" class="form-control" data-parsley-required="true">
+                      {% for k,v in app_config.get('expiremap_sorted') %}
+                        <option value={{ k }} {% if k == urls_info['expire']  %}selected{% endif %}>{{ v[1]
+                      }}</option>
+                      {% endfor %}
+                  </select>
+                </div>
+              </div>
+
                 <div class="form-group">
                     <label class="col-lg-2 control-label">Url</label>
                     <div class="col-lg-9">

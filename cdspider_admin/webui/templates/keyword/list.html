@@ -30,6 +30,7 @@
 <!--                            <a href="/keyword/dis"><i class="icon-minus-sign"></i>已禁用关键词</a>-->
                         </div>
                         <div class="col-lg-6 m-b-mini text-right">
+                            <input type="hidden" name="tid" value="{{ tid }}" id="task-id" >
                             <button class="btn btn-default btn-small" id="create-keywords">创建新关键词</button>
                         </div>
                     </div>
@@ -97,7 +98,8 @@
 <script>
 $(function(){
     $("#create-keywords").click(function() {
-        window.location.href = '/keyword/add'
+        var tid = $("#task-id").val();
+        window.location.href = '/keyword/add?tid='+ tid
     })
     $("[name=keywords-edit]").click(function() {
         window.location.href = '/keyword/' + $(this).data('kid') + '/edit'
