@@ -21,8 +21,8 @@
                     <form class="form-horizontal" data-parsley-validate action="/keyword/add" method="POST">
                         <input type="hidden" name="tid" value="{{ tid }}">
                         <div class="form-group">
-                            <label class="col-lg-3 control-label">关键词</label>
-                            <div class="col-lg-8">
+                            <label class="col-lg-2 control-label">关键词</label>
+                            <div class="col-lg-9">
                                 <textarea name="word" placeholder="多个关键词，通过回车分割，例如：关键词1{{ '\r\n' }}关键词二"
                                           class="form-control" data-parsley-required="true" data-parsley-multiple-of
                                           data-parsley-trigger="focusout"></textarea>
@@ -46,8 +46,7 @@
                             <div class="col-lg-9">
                                 <select name="expire" class="form-control" data-parsley-required="true">
                                     {% for k,v in app_config.get('expiremap_sorted') %}
-                                    <option value={{ k }}>{{ v[1]
-                                    }}</option>
+                                    <option value={{ k }}>{{ v }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

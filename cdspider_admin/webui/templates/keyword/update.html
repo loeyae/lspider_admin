@@ -20,8 +20,8 @@
           <section class="panel">
             <form class="form-horizontal" data-parsley-validate action="/keyword/{{ keyword['uuid'] }}/edit" method="POST">
               <div class="form-group">
-                <label class="col-lg-3 control-label">关键词</label>
-                <div class="col-lg-8">
+                <label class="col-lg-2 control-label">关键词</label>
+                <div class="col-lg-9">
                     <input type="text" name="word" placeholder="关键词" class="form-control" data-parsley-required="true" data-parsley-length="[2,32]" value="{{ keyword['word'] }}">
                 </div>
               </div>
@@ -43,8 +43,7 @@
                 <div class="col-lg-9">
                   <select name="expire" class="form-control" data-parsley-required="true">
                     {% for k,v in app_config.get('expiremap_sorted') %}
-                    <option value={{ k }} {% if k == keyword.get('expire', 0)  %}selected{% endif %}>{{ v[1]
-                    }}</option>
+                    <option value={{ k }} {% if k == keyword.get('expire', 0)  %}selected{% endif %}>{{ v }}</option>
                     {% endfor %}
                   </select>
                 </div>
