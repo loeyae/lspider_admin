@@ -24,7 +24,7 @@ def keyword_list():
             where={'status': [keyworddb_obj.STATUS_INIT, keyworddb_obj.STATUS_ACTIVE]}
         keyword_count=keyworddb_obj.count(where)
         content = page_obj.page_list(current_page, keyword_count)
-        keyword_list = keyworddb_obj.get_list(tid, where=where, offset=(current_page - 1) * hits, sort=[("kid", -1)])
+        keyword_list = keyworddb_obj.get_list(where=where, offset=(current_page - 1) * hits, sort=[("kid", -1)])
         app_config = app.config.get('app_config')
     except Exception as e:
         return render_template('/error.html', message=str(e))
