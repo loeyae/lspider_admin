@@ -31,7 +31,7 @@
                 <div class="col-lg-9">
                   <select name="frequency" class="form-control" data-parsley-required="true">
                     {% for k,v in app_config.get('frequencymap_sorted') %}
-                    <option value={{ k }} {% if k == keyword['frequency']  %}selected{% endif %}>{{ v[1]
+                    <option value={{ k }} {% if k == keyword.get('frequency', "4")  %}selected{% endif %}>{{ v[1]
                     }}</option>
                     {% endfor %}
                   </select>
@@ -43,7 +43,7 @@
                 <div class="col-lg-9">
                   <select name="expire" class="form-control" data-parsley-required="true">
                     {% for k,v in app_config.get('expiremap_sorted') %}
-                    <option value={{ k }} {% if k == keyword['expire']  %}selected{% endif %}>{{ v[1]
+                    <option value={{ k }} {% if k == keyword.get('expire', 0)  %}selected{% endif %}>{{ v[1]
                     }}</option>
                     {% endfor %}
                   </select>
