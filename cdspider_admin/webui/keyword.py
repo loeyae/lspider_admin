@@ -57,17 +57,18 @@ def keyword_add():
                     app.config['newtask']({'mode': 'site-search', 'kid': kwid})
                 except DuplicateKeyError:
                     continue
-            return redirect('/keyword/list')
+            return redirect('/keyword/list?tid=%s'% tid)
         except Exception as e:
             return render_template('/error.html', message=str(e))
 
 @app.route('/keyword/<int:id>/edit', methods=['POST', 'GET'])
 def keyword_upd(id):
     keyworddb_obj = app.config.get('db')["KeywordsDB"]
+    tid = int(request.args.get('tid', 0))
     if request.method=='GET':
         keyword_info = keyworddb_obj.get_detail(id)
         app_config = app.config['app_config']
-        return render_template('/keyword/update.html', app_config=app_config, keyword=keyword_info, id=id)
+        return render_template('/keyword/update.html', app_config=app_config, keyword=keyword_info, id=id, tid=tid)
     else:
         try:
             word=request.form.get('word')
@@ -78,7 +79,7 @@ def keyword_upd(id):
             ret = keyworddb_obj.update(id, dic)
             if ret:
                 return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
-            return redirect('/keyword/list')
+            return redirect('/keyword/list?tid=%s' % tid)
         except Exception as e:
             return render_template('/error.html', message=str(e))
 
