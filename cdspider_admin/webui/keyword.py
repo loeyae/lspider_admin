@@ -48,8 +48,8 @@ def keyword_add():
                     'word': word,
                     'src_txt':'后台',
                     'status': keyworddb_obj.STATUS_ACTIVE,
-                    'creator':'admin',
-                    'updator':'admin'
+                    'frequency': request.form.get('frequency', '4'),
+                    'expire': int(request.form.get('expire', 0))
                 }
                 try:
                     kwid = keyworddb_obj.insert(dic)
@@ -74,6 +74,8 @@ def keyword_upd(id):
             word=request.form.get('word')
             dic = {
                 'word': word,
+                'frequency': request.form.get('frequency', '4'),
+                'expire': int(request.form.get('expire', 0))
             }
             keyworddb_obj = app.config.get('db')["KeywordsDB"]
             ret = keyworddb_obj.update(id, dic)
