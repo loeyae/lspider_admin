@@ -35,7 +35,8 @@
                                 <select name="frequency" class="form-control" data-parsley-required="true">
                                     {% for k,v in app_config.get('frequencymap_sorted') %}
                                     <option value={{ k }}>{{ v[1]
-                                    }}</option>
+                                        }}
+                                    </option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -73,33 +74,32 @@
 <script src="{{ url_for('static', filename='js/parsley/zh_cn.extra.js') }}"></script>
 <script>
 $(function(){
-   window.Parsley
-  .addValidator('multipleOf', {
-    validateString: function(value) {
-      var words = value.split(/(\r\n|\n|\r)/)
-      var ret = true
-      for (var word in words){
-          if (word == '\r' || word == '\n') {
-              continue
-          }
-          if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2, 32)) {
-              return false
-          }
-      }
-      return ret
-    },
-    messages: {
-      "zh-cn": '请填写2-32个字符的关键词'
-    }
-  });
-  $(function(){
+    window.Parsley.addValidator('multipleOf', {
+        validateString: function(value) {
+            var words = value.split(/(\r\n|\n|\r)/)
+            var ret = true
+            for (var word in words){
+                if (word == '\r' || word == '\n') {
+                    continue
+                }
+                if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2, 32)) {
+                    return false
+                }
+            }
+            return ret
+        },
+        messages: {
+          "zh-cn": '请填写2-32个字符的关键词'
+        }
+    });
     $("[name=reset]").click(function(){
         $(this).parent("form").reset()
     })
     $("[name=submit]").click(function(){
         $(this).parent("form").submit()
     })
-})
+});
+
 
 </script>
 
