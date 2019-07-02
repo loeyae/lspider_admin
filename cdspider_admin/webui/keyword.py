@@ -79,8 +79,6 @@ def keyword_upd(id):
             }
             keyworddb_obj = app.config.get('db')["KeywordsDB"]
             ret = keyworddb_obj.update(id, dic)
-            if ret:
-                return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
             return redirect('/keyword/list?tid=%s' % tid)
         except Exception as e:
             return render_template('/error.html', message=str(e))
