@@ -62,6 +62,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
+                                    <label class="col-lg-2 control-label">时效</label>
+                                    <div class="col-lg-9">
+                                        <select name="expire" class="form-control">
+                                            {% for k,v in app_config.get('expiremap_sorted') %}
+                                            <option value="{{ k }}" {% if int(task_info.get('expire', 0)) == int(k)
+                                            %} selected {% endif %}>{{ v }}</option>
+                                            {% endfor %}
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
                                     <label class="col-lg-2 control-label">任务描述</label>
                                     <div class="col-lg-9">
                                         <textarea id="comments" name="desc" class="form-control" data-parsley-maxlength='200'>{{ task_info.get('desc', '') }}</textarea>

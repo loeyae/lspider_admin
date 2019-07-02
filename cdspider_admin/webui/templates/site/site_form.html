@@ -71,7 +71,7 @@
                                     <div class="col-lg-9">
                                         <select name="expire" class="form-control">
                                             {% for k,v in app_config.get('expiremap_sorted') %}
-                                            <option value="{{ k }}">{{ v[1] }}</option>
+                                            <option value="{{ k }}">{{ v }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>

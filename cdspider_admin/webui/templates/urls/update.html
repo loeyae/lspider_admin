@@ -53,8 +53,7 @@
                 <div class="col-lg-9">
                   <select name="expire" class="form-control" data-parsley-required="true">
                       {% for k,v in app_config.get('expiremap_sorted') %}
-                        <option value={{ k }} {% if k == urls_info['expire']  %}selected{% endif %}>{{ v[1]
-                      }}</option>
+                        <option value={{ k }} {% if k == urls_info['expire']  %}selected{% endif %}>{{ v }}</option>
                       {% endfor %}
                   </select>
                 </div>
