@@ -39,7 +39,7 @@
                     <div class="col-lg-9">
                       <select name="frequency" class="form-control" data-parsley-required="true">
                         {% for k,v in app_config.get('frequencymap_sorted') %}
-                        <option value="{{ k }}" {% if task_info.get('frequency', "4) == k %}selected{% endif %} >{{
+                        <option value="{{ k }}" {% if task_info.get('frequency', "4") == k %}selected{% endif %} >{{
                           v[1]
                           }}</option>
                         {% endfor %}
