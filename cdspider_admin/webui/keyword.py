@@ -65,20 +65,45 @@ def keyword_add():
 def keyword_upd(id):
     keyworddb_obj = app.config.get('db')["KeywordsDB"]
     tid = int(request.args.get('tid', 0))
+    task_info = None
+    if tid:
+        task_obj = app.config.get('db')["TaskDB"]
+        task_info = task_obj.get_detail(tid)
+        if not task_info:
+            return render_template('error.html', message="无效的任务")
+    keyword_info = keyworddb_obj.get_detail(id)
+    if not id or not keyword_info:
+        return render_template('error.html', message="无效的关键词")
     if request.method=='GET':
-        keyword_info = keyworddb_obj.get_detail(id)
         app_config = app.config['app_config']
         return render_template('/keyword/update.html', app_config=app_config, keyword=keyword_info, id=id, tid=tid)
     else:
         try:
             word=request.form.get('word')
+            frequency = request.form.get('frequency', '4')
+            expire = int(request.form.get('expire', 0))
             dic = {
                 'word': word,
-                'frequency': request.form.get('frequency', '4'),
-                'expire': int(request.form.get('expire', 0))
+                'frequency': frequency,
+                'expire': expire
             }
             keyworddb_obj = app.config.get('db')["KeywordsDB"]
             ret = keyworddb_obj.update(id, dic)
+            if ret:
+                if frequency != keyword_info.get("frequency"):
+                    if task_info:
+                        app.config['frequency']({'kid': id, 'mode': task_info['type'], "frequency": frequency})
+                    else:
+                        app.config['frequency']({'kid': id, 'mode': "search", "frequency": frequency})
+                        app.config['frequency']({'kid': id, 'mode': "site-search", "frequency": frequency})
+
+                if expire != keyword_info.get("expire"):
+                    if task_info:
+                        app.config['expire']({'kid': id, 'mode': task_info['type'], "expire": expire})
+                    else:
+                        app.config['expire']({'kid': id, 'mode': "search", "expire": expire})
+                        app.config['expire']({'kid': id, 'mode': "site-search", "expire": expire})
+
             return redirect('/keyword/list?tid=%s' % tid)
         except Exception as e:
             return render_template('/error.html', message=str(e))
