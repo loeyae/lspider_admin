@@ -46,15 +46,21 @@ def rule_add():
     tid=request.args.get('tid')
     task_obj = app.config.get('db')['TaskDB']
     task_info = task_obj.get_detail(tid)
+    rule_obj = app.config.get('db')["ListRuleDB"]
     if not tid or not task_info:
         return render_template('error.html', message="无效的任务")
     if request.method=='GET':
         rid = int(request.args.get('rid', 0))
+        if rid:
+            rule_info = rule_obj.get_detail(rid)
+            if not rule_info:
+                return render_template('error.html', message="无效的规则")
+        type = rule_obj.RULE_TYPE_DEFAULT if rid == 0 else rule_obj.RULE_TYPE_PREPARE
         app_config = app.config.get('app_config')
-        return render_template('/rule/add.html', app_config=app_config, task_info=task_info, rule={}, tid=tid, rid=rid)
+        return render_template('/rule/add.html', app_config=app_config, task_info=task_info, rule={}, tid=tid,
+                               rid=rid, type=type)
     else:
         try:
-            rule_obj = app.config.get('db')["ListRuleDB"]
             data = request.form.to_dict()
             mrid = data.pop('rid')
             mode = data.pop("mode")
