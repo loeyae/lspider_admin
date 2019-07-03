@@ -30,14 +30,16 @@ def rule_list():
         if not tid or not task_info:
             return render_template('error.html', message="无效的任务")
         rule_obj = app.config.get('db')["ListRuleDB"]
-        keyword_count = rule_obj.count(where={'status': [rule_obj.STATUS_INIT, rule_obj.STATUS_ACTIVE],'tid': int(tid)})
-        content = page_obj.page_list(current_page, keyword_count)
-        rule_list = rule_obj.get_list(where={'status': [rule_obj.STATUS_INIT, rule_obj.STATUS_ACTIVE],'tid': int(
-            tid)}, offset=(current_page-1) * hits, sort=[("uuid", -1)])
+        rule_count = rule_obj.count(where={'tid': int(tid), 'type': rule_obj.RULE_TYPE_DEFAULT, 'status': [
+            rule_obj.STATUS_INIT, rule_obj.STATUS_ACTIVE]})
+        content = page_obj.page_list(current_page, rule_count)
+        rule_list = rule_obj.get_list(where={'tid': int(tid), 'type': rule_obj.RULE_TYPE_DEFAULT, 'status': [
+            rule_obj.STATUS_INIT, rule_obj.STATUS_ACTIVE]}, offset=(current_page-1) * hits, sort=[("uuid", -1)])
         app_config = app.config.get('app_config')
     except Exception as e:
         return render_template('/error.html', message=str(e))
-    return render_template('/rule/list.html', rule_list=rule_list, app_config=app_config, content=content, pid=task_info['pid'], tid=tid, task_info=task_info)
+    return render_template('/rule/list.html', rule_list=rule_list, app_config=app_config, content=content,
+                           pid=task_info['pid'], tid=tid, task_info=task_info)
 
 @app.route('/rule/add', methods=['POST', 'GET'])
 def rule_add():
