@@ -1,0 +1,235 @@
+{% extends 'layout.html' %}
+{% block custom_header %}
+<link rel="stylesheet" href="{{ url_for('static', filename='codemirror/lib/codemirror.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='codemirror/theme/eclipse.css') }}">
+<script src="{{ url_for('static', filename='codemirror/lib/codemirror.js') }}"></script>
+<script src="{{ url_for('static', filename='codemirror/mode/python/python.js') }}"></script>
+{% endblock %}
+{% block body %}
+<!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+            <h4><i class="icon-edit"></i>编辑附加数据解析规则</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                    <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                    <li><a href="/parser/list"><i class="icon-item-ul"></i>附加数据解析规则</a></li>
+                    <li class="active">编辑附加数据规则-{{ rule['name'] }}</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+                    <form class="form-horizontal">
+                        <header class="panel-heading">
+                            <ul class="nav nav-tabs pull-right">
+                                <li class="active">
+                                    <a href="#parser-base" data-toggle="tab">基本设置</a>
+                                </li>
+                                <li>
+                                    <a href="#parser-item" data-toggle="tab">爬虫规则</a>
+                                </li>
+                                <li>
+                                    <a href="#parser-script" data-toggle="tab">自定义Handle</a>
+                                </li>
+                            </ul>
+                            <h4><i class="icon-edit"></i>编辑详情规则</h4>
+                        </header>
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="parser-base">
+                                <div class="col-lg-12">
+                                    <h5>规则信息</h5>
+                                    <input type="hidden" name="mode" value="parser-base">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">规则名称</label>
+                                    <div class="col-lg-9">
+                                        <input type="text" name="name" placeholder="规则名称" class="form-control"
+                                               data-parsley-trigger="change" data-parsley-required="true"
+                                               data-parsley-length='[2, 32]' value="{{ rule.get('name', '') }}">
+
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">规则类型</label>
+                                    <div class="col-lg-9">
+                                        <select name="type" data-parsley-required="true" class="form-control">
+                                            <option value="bbs-item" {% if rule.get('type', '') == "bbs-item"%}
+                                            selected{% endif %}>论坛回帖</option>
+                                            <option value="comment" {% if rule.get('type', '') == "comment"%}
+                                            selected{% endif %}>>评论</option>
+                                            <option value="interact" {% if rule.get('type', '') == "interact"%}
+                                            selected{% endif %}>>互动数</option>
+                                            <option value="extract" {% if rule.get('type', '') == "extract"%}
+                                            selected{% endif %}>>附加数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <h5>匹配设置</h5>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">域名</label>
+                                    <div class="col-lg-9">
+                                        <input type="text" name="domain" placeholder="sample.com" class="form-control"
+                                               value="{{ rule.get('domain', '') }}" data-parsley-required="true" data-parsley-length="[3,32]">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">二级域名</label>
+                                    <div class="col-lg-9">
+                                        <input type="text" name="subdomain" placeholder="www.sample.com" class="form-control"
+                                           value="{{ rule.get('subdomain', '') }}" data-parsley-length="[5,64]">
+                                    </div>
+                                </div>
+                                {% include 'settings/extra_pre_parse.html' %}
+
+                            </div>
+                            <div id="parser-item" class="tab-pane">
+                                <input type="hidden" name="mode" value="parser-item">
+                                {% include 'settings/item_request_base.html' %}
+                                {% include 'settings/item_request_params.html' %}
+                                {% include 'settings/item_paging.html' %}
+                                <div class="col-lg-12">
+                                    <h5>解析规则</h5>
+                                </div>
+                                {% set prefix = True %}
+                                {% include 'settings/item_parse_custom.html' %}
+                                {% include 'settings/item_request_retry.html' %}
+                            </div>
+                            <div id="parser-script" class="tab-pane">
+                                <div class="col-lg-12">
+                                    &nbsp;
+                                    <input type="hidden" name="mode" value="parser-script">
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">自定义脚本</label>
+                                    <div class="col-lg-9">
+                                        <textarea id="code">{{ rule.get('script', '') }}</textarea>
+                                    </div>
+                                </div>
+                                <div class="col-lg-12">
+                                    <h5>验证规则</h5>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">测试URL</label>
+                                    <div class="col-lg-10">
+                                        <input type="text" name="script-test-url" id="script-test-url" value=""
+                                               placeholder="http://sample.com">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label"></label>
+                                    <div class="col-lg-10">
+                                        <input type="hidden" name="script-test-rule" value="{{ rule['uuid'] }}">
+                                        <button type="button" name="script-test" data-ride="test-parser-rule"
+                                                data-prefix="script-test" data-mode="item" data-page="1">测试</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">下一页URL</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-next-url" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">测试结果</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-pane" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">脚本输出</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-out" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">错误信息</label>
+                                    <div class="col-lg-10">
+                                        <div id="script-test-error" class="col-lg-12 text-default"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group text-center">
+                                <input type="reset" class="btn btn-white btn-large btn-prev" value="取消">
+                                <button type="button" class="btn btn-white btn-large btn-next" id="form_submit">修改</button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+        </div>
+    </section>
+</section>
+{% include 'settings/loading.html' %}
+{% endblock %}
+
+
+{% block custom_footer %}
+<script src="{{ url_for('static', filename='js/fuelux/fuelux.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/parsley.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/zh_cn.js') }}"></script>
+<script src="{{ url_for('static', filename='js/parsley/zh_cn.extra.js') }}"></script>
+<script>
+var editor = false
+$(".nav li:last a").on('shown.bs.tab', function (e) {
+    if (!editor) {
+        editor = CodeMirror.fromTextArea(document.getElementById("code"), {
+            lineNumbers: true,
+            styleActiveLine: true,
+            matchBrackets: true,
+            lineSeparator: '\n',
+            indentUnit: 4,
+        });
+        editor.setOption("theme", "eclipse");
+    }
+})
+$('#form_submit').click(function () {
+    var index = $(".nav-tabs li.active").index()
+    var $step = $('.tab-content').find('.tab-pane:eq(' + index + ')');
+    $step.find(':input').data('parsley-group', 'block-' + index);
+    var vr = true
+    $('.main').find('form').parsley().whenValidate({
+       group: 'block-' + index
+    }).fail(function(){
+        vr = false
+    }).done(function() {
+      vr = true
+    })
+    if (vr) {
+        var data = $step.find(':input').serialize()
+        if ($(".nav-tabs li.active a").attr("href") == '#parser-script') {
+            data += '&script='+ encodeURIComponent(editor.getValue());
+        }
+        $.ajax({
+            type: "post",
+            dataType: "json",
+            url: '/parser/{{ rule["uuid"] }}/edit',
+            data: data,
+            success: function(result){
+                if (result.status == 200) {
+                    if (result.data.update) {
+                        alert('数据保存成功！')
+                    } else {
+                        alert('数据保存失败！')
+                    }
+                } else{
+                    alert('数据保存失败。')
+                    return false
+                }
+            },
+            error: function(){
+                alert('数据保存失败。')
+                return false
+            }
+        });
+    }
+})
+</script>
+{% endblock %}

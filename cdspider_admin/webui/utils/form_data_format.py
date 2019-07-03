@@ -346,6 +346,23 @@ def build_parser_data(mode, formdata):
         return build_script_data(formdata)
     return build_base_data(formdata)
 
+def build_extra_data(mode, formdata):
+    if mode == 'extra-item':
+        return build_item_data(formdata)
+    elif mode == 'extra-script':
+        return build_script_data(formdata)
+    else:
+        data = {
+            "name": formdata['name'],
+            "type": formdata['type'],
+            "domain": formdata['domain'],
+            "subdomain": formdata['subdomain'],
+        }
+        other_parse = build_parse_other(formdata, 'extra-parse-other-')
+        if other_parse:
+            data['preparse'] = other_parse
+        return build_base_data(formdata)
+
 
 def build_form_unique_data(data):
     if 'unique' in data and data['unique']:

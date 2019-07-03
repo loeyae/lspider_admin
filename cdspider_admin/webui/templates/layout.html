@@ -66,6 +66,10 @@
                     <a href="/parser/list"><i class="icon-file-text icon-xlarge"></i>解析规则</a>
                 </li>
 
+                <li {% if request.path.startswith("/extra/") %}class="active"{% endif %}>
+                    <a href="/extra/list"><i class="icon-paste icon-xlarge"></i>附加数据规则</a>
+                </li>
+
                 <li class="dropdown-submenu">
                     <a href="#"><i class="icon-link icon-xlarge"></i>其他</a>
                     <ul class="dropdown-menu">
