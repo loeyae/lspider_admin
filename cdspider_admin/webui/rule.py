@@ -49,12 +49,14 @@ def rule_add():
     if not tid or not task_info:
         return render_template('error.html', message="无效的任务")
     if request.method=='GET':
+        rid = int(request.args.get('rid', 0))
         app_config = app.config.get('app_config')
-        return render_template('/rule/add.html', app_config=app_config, task_info=task_info, rule={}, tid=tid)
+        return render_template('/rule/add.html', app_config=app_config, task_info=task_info, rule={}, tid=tid, rid=rid)
     else:
         try:
             rule_obj = app.config.get('db')["ListRuleDB"]
             data = request.form.to_dict()
+            mrid = data.pop('rid')
             mode = data.pop("mode")
             if mode == "rule-base":
                 dic = build_rule_data(mode, data);
@@ -68,6 +70,8 @@ def rule_add():
                 dic['url'] = None
                 dic['script'] = None
                 rid = rule_obj.insert(dic)
+                if rid and mrid:
+                    rule_obj.update(mrid, {"preid": rid})
                 return jsonify({"status": 200, "message": "Ok", "data": {"rid": rid}})
             else:
                 end = False
