@@ -25,3 +25,10 @@
         <textarea name="item-request-headers" placeholder="key1=value1&key2=value2" class="form-control">{{ rule.get("request", {}).get('headers_data', '') }}</textarea>
     </div>
 </div>
+<div class="form-group">
+    <label class="col-lg-2 control-label">附加随机数</label>
+    <div class="col-lg-9">
+        <textarea name="item-request-random" placeholder="key1=value1&key2=value2" class="form-control">{{
+            rule.get("request", {}).get('random_data', '') }}</textarea>
+    </div>
+</div>

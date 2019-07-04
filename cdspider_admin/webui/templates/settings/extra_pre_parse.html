@@ -6,7 +6,7 @@
                 class="form-control" data-parsley-multiple-of data-parsley-trigger="focusout"></textarea>
         <span class="input-group-btn">
             <button class="btn btn-primary" type="button" data-ride="add-parse-rule"
-                    data-column="extra-parse-other"
+                    data-column="extra-parse-other" data-mode="true"
                     data-target='#extra-parser-columns'>增加</button>
         </span>
     </div>
@@ -38,6 +38,13 @@
         <div class="col-lg-9 input-group">
             <input type="text" name="extra-parse-other-{{ k }}-extract" placeholder=""
                    class="input-small form-control" value="{{ v['extract'] }}" />
+        </div>
+        <label class="col-lg-2 control-label">{{ v['name'] }}参数模式</label>
+        <div class="col-lg-9 input-group">
+        <select name="extra-parse-other-{{ k }}-mode" class="form-control">
+            <option value="url" {% if v['mode'] == "url" %}selected{% endif %}>url参数</option>
+            <option value="post" {% if v['mode'] == "post" %}selected{% endif %}>提交参数</option>
+            </select>
         </div>
     </div>
     {% endfor %}

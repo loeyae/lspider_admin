@@ -25,19 +25,23 @@ def build_parse_other(formdata, prefix):
                     data[_k]['name'] = v
                 else:
                     data.update({_k: {"name": v}})
-            else:
-                if _k.endswith("-extract"):
+            elif _k.endswith("-extract"):
                     _k = _k[:-8]
                     if _k in data:
                         data[_k].update({"extract": v})
                     else:
                         data.update({_k:{"extract": v}})
-
-                else:
+            elif _k.endswith("-mode"):
+                    _k = _k[:-8]
                     if _k in data:
-                        data[_k].update({"filter": v, "type": "text"})
+                        data[_k].update({"mode": v})
                     else:
-                        data.update({_k:{"filter": v, "type": "text"}})
+                        data.update({_k:{"mode": v}})
+            else:
+                if _k in data:
+                    data[_k].update({"filter": v, "type": "text"})
+                else:
+                    data.update({_k:{"filter": v, "type": "text"}})
     return data
 
 def build_get_data(data, formdata, prefix):
@@ -99,7 +103,7 @@ def build_headers_data(data, formdata, prefix):
         if len(carr) > 1:
             data['request']['headers_list'] = []
             for item in carr:
-                data['request']['headers'].append(cdutils.mgkeyconvert(cdutils.query2dict(item)))
+                data['request']['headers_list'].append(cdutils.mgkeyconvert(cdutils.query2dict(item)))
         else:
             query = cdutils.query2dict(carr[0])
             data['request']['headers'] = cdutils.mgkeyconvert(query)
@@ -111,10 +115,22 @@ def build_cookies_data(data, formdata, prefix):
         if len(carr) > 1:
             data['request']['cookies_list'] = []
             for item in carr:
-                data['request']['cookies'].append(cdutils.mgkeyconvert(cdutils.query2dict(item)))
+                data['request']['cookies_list'].append(cdutils.mgkeyconvert(cdutils.query2dict(item)))
         else:
             cookies = cdutils.query2dict(carr[0])
             data['request']['cookies'] = cdutils.mgkeyconvert(cookies)
+
+def build_random_data(data, formdata, prefix):
+    key = "%s-random" % prefix
+    if key in formdata and formdata[key]:
+        carr = re.split('(?:(?:\r\n)|\r|\n)', formdata[key])
+        if len(carr) > 1:
+            data['request']['random_list'] = []
+            for item in carr:
+                data['request']['random_list'].append(cdutils.mgkeyconvert(cdutils.query2dict(item)))
+        else:
+            random = cdutils.query2dict(carr[0])
+            data['request']['random'] = cdutils.mgkeyconvert(random)
 
 
 def build_unique_data(formdata):
@@ -183,6 +199,7 @@ def build_list_data(formdata):
     build_post_data(data, formdata, 'list-request')
     build_headers_data(data, formdata, 'list-request')
     build_cookies_data(data, formdata, 'list-request')
+    build_random_data(data, formdata, 'list-request')
     build_paging_data(data, formdata, 'list-paging')
 
     if 'list-parse-filter' in formdata and formdata['list-parse-filter']:
@@ -275,6 +292,7 @@ def build_item_data(formdata):
     build_post_data(data, formdata, 'item-request')
     build_headers_data(data, formdata, 'item-request')
     build_cookies_data(data, formdata, 'item-request')
+    build_random_data(data, formdata, 'item-request')
     build_paging_data(data, formdata, 'item-paging')
 
     data['parse'] = {
@@ -355,13 +373,15 @@ def build_extra_data(mode, formdata):
         data = {
             "name": formdata['name'],
             "type": formdata['type'],
+            "url": formdata['url'],
+            "mode": formdata['param-mode'],
             "domain": formdata['domain'],
             "subdomain": formdata['subdomain'],
         }
         other_parse = build_parse_other(formdata, 'extra-parse-other-')
         if other_parse:
             data['preparse'] = other_parse
-        return build_base_data(formdata)
+        return data
 
 
 def build_form_unique_data(data):
@@ -428,9 +448,17 @@ def build_form_params_data(data):
         for cookies in data['request']['cookies_list']:
             cookies_list.append('&'.join(cdutils.url_encode(cookies)))
         if cookies_list:
-            data['request']['cookies_data'] = '\r\n'.join(cookies)
+            data['request']['cookies_data'] = '\r\n'.join(cookies_list)
     elif 'cookies' in data['request']:
         data['request']['cookies_data'] = cdutils.url_encode(data['request']['cookies'])
+    if 'random_list' in data['request']:
+        random_list = []
+        for random in data['request']['random_list']:
+            random_list.append('&'.join(cdutils.url_encode(random)))
+        if random_list:
+            data['request']['random_data'] = '\r\n'.join(random_list)
+    elif 'random' in data['request']:
+        data['request']['random_data'] = cdutils.url_encode(data['request']['random'])
 
 def build_form_data(data):
     data['unique'] = build_form_unique_data(data)

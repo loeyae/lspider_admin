@@ -21,12 +21,12 @@
 
                     <div class="row text-small">
                         <div class="col-lg-6 m-b-mini">
-                            <select class="input-small inline" id="parsers-oparate">
+                            <select class="input-small inline" id="extras-oparate">
                                 <option value="default">批量操作</option>
                                 <option value="enable">启用</option>
                                 <option value="delete">删除</option>
                             </select>
-                            <a href="/parser/list"><i class="icon-list-ul"></i>附加数据规则列表</a>
+                            <a href="/extra/list"><i class="icon-list-ul"></i>附加数据规则列表</a>
                         </div>
                     </div>
                     <div class="pull-out m-t-small">
@@ -52,7 +52,7 @@
                             </thead>
                             <tbody>
 
-                                {% for item in parser_list %}
+                                {% for item in extra_list %}
                                 <tr>
                                     <td ><input type="checkbox" class="checkbox" value="{{ item['uuid'] }}"></td>
                                     <td >{{ item['uuid'] }}</td>
@@ -65,9 +65,9 @@
 
                                     <td >
 
-                                        <input class="btn btn-default btn-small" name="parsers-enable" type="button"
+                                        <input class="btn btn-default btn-small" name="extras-enable" type="button"
                                                data-sid="{{  item['uuid'] }}" value="启用"/>
-                                        <input class="btn btn-default btn-small" name="parsers-delete" type="button"
+                                        <input class="btn btn-default btn-small" name="extras-delete" type="button"
                                                data-sid="{{  item['uuid'] }}" value="删除"/>
                                     </td>
                                 </tr>
@@ -90,21 +90,21 @@
 <script src="{{ url_for('static', filename='js/datatables/jquery.dataTables.min.js') }}"></script>
 <script>
 $(function(){
-    $("[name=parsers-enable]").click(function() {
+    $("[name=extras-enable]").click(function() {
         $.ajax({
             type: 'get',
-            url: '/parser/'+ $(this).data('sid') +'/enable',
+            url: '/extra/'+ $(this).data('sid') +'/enable',
             dataType: 'json',
             success: function(){
                 location.reload();
             },
         });
     })
-    $("[name=parsers-delete]").click(function() {
+    $("[name=extras-delete]").click(function() {
         if (confirm("删除附加数据规则将会删除与该关键字关联的所有任务,是否确认删除?")) {
             $.ajax({
                 type: 'get',
-                url: '/parser/'+ $(this).data('sid') +'/delete',
+                url: '/extra/'+ $(this).data('sid') +'/delete',
                 dataType: 'json',
                 success: function(){
                     location.reload();
@@ -112,7 +112,7 @@ $(function(){
             });
         }
     })
-    $("#parsers-oparate").change(function(){
+    $("#extras-oparate").change(function(){
         var val = $(this).val()
         var data = $(":checked[name=id]").map(function(){
             return $(this).val()
@@ -121,17 +121,17 @@ $(function(){
             case 'enable':
                 $.ajax({
                     type: 'post',
-                    url: '/parser/enable',
+                    url: '/extra/enable',
                     dataType: 'json',
                     data: {"id": data},
                     success: function(result){
                         if (result.status == 400) {
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                         } else if (result.status == 200) {
                             location.reload();
                         } else {
                             alert(result.message)
-                            $("#parsers-oparate").val('default')
+                            $("#extras-oparate").val('default')
                         }
                     }
                 });
@@ -140,17 +140,17 @@ $(function(){
                 if (confirm("删除附加数据规则将会删除选中附加数据规则相关任务,是否确认删除?")) {
                     $.ajax({
                         type: 'post',
-                        url: '/parser/delete',
+                        url: '/extra/delete',
                         dataType: 'json',
                         data: {"id": data},
                         success: function(result){
                             if (result.status == 400) {
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             } else if (result.status == 200) {
                                 location.reload();
                             } else {
                                 alert(result.message)
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             }
                         },
                     });

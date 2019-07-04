@@ -326,6 +326,7 @@ $(document).ready(function() {
         var $input = $(e.target).parents('.input-group').find(':input')
         var $target = $($(e.target).data('target'))
         var $column = $(e.target).data('column');
+        var $mode = $(e.target).data('mode');
         var _v = $input.val()
         if (_v) {
             var pre_custom_columns = _v.split("\n")
@@ -356,8 +357,19 @@ $(document).ready(function() {
                         '<label class="col-lg-2 control-label">'+ v +'提取规则</label>'+
                         '<div class="col-lg-9 input-group">'+
                             '<input type="text" name="'+ $column +'-'+ k +'-extract" placeholder="" class="form-control" />'+
-                        '</div>'+
-                    '</div>';
+                        '</div>';
+
+                if ($mode == true) {
+
+                 _html += '<label class="col-lg-2 control-label">'+ v +'参数模式</label>'+
+                        '<div class="col-lg-9 input-group">'+
+                            '<select name="'+ $column +'-'+ k +'-mode" class="form-control">'+
+                                '<option value="url">url参数</option>'+
+                                '<option value="post">提交参数</option>'+
+                            '</select>'+
+                        '</div>';
+                }
+                _html += '</div>';
             }
             $target.append(_html)
         }

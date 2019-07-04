@@ -21,15 +21,15 @@
 
                     <div class="row text-small">
                         <div class="col-lg-6 m-b-mini">
-                            <select class="input-small inline" id="parsers-oparate">
+                            <select class="input-small inline" id="extras-oparate">
                                 <option value="default">批量操作</option>
                                 <option value="active">激活</option>
                                 <option value="disable">禁用</option>
                             </select>
-<!--                            <a href="/parser/dis"><i class="icon-minus-sign"></i>已禁用附加数据规则</a>-->
+<!--                            <a href="/extra/dis"><i class="icon-minus-sign"></i>已禁用附加数据规则</a>-->
                         </div>
                         <div class="col-lg-6 m-b-mini text-right">
-                            <button class="btn btn-default btn-small" id="create-parsers">创建新附加数据规则</button>
+                            <button class="btn btn-default btn-small" id="create-extras">创建新附加数据规则</button>
                         </div>
                     </div>
                     <div class="pull-out m-t-small">
@@ -55,7 +55,7 @@
                             </thead>
                             <tbody>
 
-                                {% for item in parser_list %}
+                                {% for item in extra_list %}
                                 <tr>
                                     <td
                                     ><input type="checkbox" name="id" class="checkbox" value="{{ item['uuid'] }}"></td>
@@ -71,13 +71,13 @@
 
                                     <td >
 
-                                        <input class="btn btn-default btn-small" name="parsers-edit" type="button"
+                                        <input class="btn btn-default btn-small" name="extras-edit" type="button"
                                                data-rid="{{  item['uuid'] }}" value="编辑"/>
-                                        <input class="btn btn-default btn-small" name="parsers-active" type="button"
+                                        <input class="btn btn-default btn-small" name="extras-active" type="button"
                                                data-rid="{{  item['uuid'] }}" value="激活" {% if
                                                app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>
 
-                                        <select class="input-small inline" name="parsers-oparate"
+                                        <select class="input-small inline" name="extras-oparate"
                                                 data-rid="{{  item['uuid'] }}">
                                             <option value="default">更多操作</option>
                                             <option value="disable">禁用</option>
@@ -104,16 +104,16 @@
 <script src="{{ url_for('static', filename='js/datatables/jquery.dataTables.min.js') }}"></script>
 <script>
 $(function(){
-    $("#create-parsers").click(function() {
-        window.location.href = '/parser/add'
+    $("#create-extras").click(function() {
+        window.location.href = '/extra/add'
     })
-    $("[name=parsers-edit]").click(function() {
-        window.location.href = '/parser/' + $(this).data('rid') + '/edit'
+    $("[name=extras-edit]").click(function() {
+        window.location.href = '/extra/' + $(this).data('rid') + '/edit'
     })
-    $("[name=parsers-active]").click(function() {
+    $("[name=extras-active]").click(function() {
         $.ajax({
             type: 'get',
-            url: '/parser/'+ $(this).data('rid') +'/active',
+            url: '/extra/'+ $(this).data('rid') +'/active',
             dataType: 'json',
             success: function(result){
                 if (result.status == 200) {
@@ -124,14 +124,14 @@ $(function(){
             },
         });
     })
-    $("[name=parsers-oparate]").change(function(){
+    $("[name=extras-oparate]").change(function(){
         var val = $(this).val()
         switch (val){
             case 'disable':
                 if (confirm("禁用附加数据规则将会禁用与该关键字关联的所有任务,是否确认禁用?")) {
                     $.ajax({
                     type: 'get',
-                        url: '/parser/'+ $(this).data('rid') +'/disable',
+                        url: '/extra/'+ $(this).data('rid') +'/disable',
                         dataType: 'json',
                         success: function(result){
                             if (result.status == 200) {
@@ -147,7 +147,7 @@ $(function(){
                 if (confirm("删除附加数据规则将会删除与该关键字关联的所有任务,是否确认删除?")) {
                     $.ajax({
                         type: 'get',
-                        url: '/parser/'+ $(this).data('rid') +'/delete',
+                        url: '/extra/'+ $(this).data('rid') +'/delete',
                         dataType: 'json',
                         success: function(result){
                             if (result.status == 200) {
@@ -163,7 +163,7 @@ $(function(){
                 return true;
         }
     })
-    $("#parsers-oparate").change(function(){
+    $("#extras-oparate").change(function(){
         var val = $(this).val()
         var data = $(":checked[name=id]").map(function(){
             return $(this).val()
@@ -172,17 +172,17 @@ $(function(){
             case 'active':
                 $.ajax({
                     type: 'post',
-                    url: '/parser/active',
+                    url: '/extra/active',
                     dataType: 'json',
                     data: {"id": data},
                     success: function(result){
                         if (result.status == 400) {
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                         } else if (result.status == 200) {
                             location.reload();
                         } else {
                             alert(result.message)
-                            $("#parsers-oparate").val('default')
+                            $("#extras-oparate").val('default')
                         }
                     },
                 });
@@ -191,17 +191,17 @@ $(function(){
                 if (confirm("禁用附加数据规则将会禁用选中附加数据规则相关任务,是否确认禁用?")) {
                     $.ajax({
                         type: 'post',
-                        url: '/parser/disable',
+                        url: '/extra/disable',
                         dataType: 'json',
                         data: {"id": data},
                         success: function(result){
                             if (result.status == 400) {
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             } else if (result.status == 200) {
                                 location.reload();
                             } else {
                                 alert(result.message)
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             }
                         },
                     });
@@ -212,17 +212,17 @@ $(function(){
                 if (confirm("删除附加数据规则将会删除选中附加数据规则相关任务,是否确认删除?")) {
                     $.ajax({
                         type: 'post',
-                        url: '/parser/delete',
+                        url: '/extra/delete',
                         dataType: 'json',
                         data: {"id": data},
                         success: function(result){
                             if (result.status == 400) {
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             } else if (result.status == 200) {
                                 location.reload();
                             } else {
                                 alert(result.message)
-                                $("#parsers-oparate").val('default')
+                                $("#extras-oparate").val('default')
                             }
                         },
                     });

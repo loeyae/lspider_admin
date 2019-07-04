@@ -17,7 +17,7 @@
                 <!-- .breadcrumb -->
                 <ul class="breadcrumb">
                     <li><a href="/"><i class="icon-home"></i>首页</a></li>
-                    <li><a href="/parser/list"><i class="icon-item-ul"></i>附加数据解析规则</a></li>
+                    <li><a href="/extra/list"><i class="icon-item-ul"></i>附加数据解析规则</a></li>
                     <li class="active">编辑附加数据规则-{{ rule['name'] }}</li>
                 </ul>
                 <!-- / .breadcrumb -->
@@ -28,22 +28,22 @@
                         <header class="panel-heading">
                             <ul class="nav nav-tabs pull-right">
                                 <li class="active">
-                                    <a href="#parser-base" data-toggle="tab">基本设置</a>
+                                    <a href="#extra-base" data-toggle="tab">基本设置</a>
                                 </li>
                                 <li>
-                                    <a href="#parser-item" data-toggle="tab">爬虫规则</a>
+                                    <a href="#extra-item" data-toggle="tab">爬虫规则</a>
                                 </li>
                                 <li>
-                                    <a href="#parser-script" data-toggle="tab">自定义Handle</a>
+                                    <a href="#extra-script" data-toggle="tab">自定义Handle</a>
                                 </li>
                             </ul>
-                            <h4><i class="icon-edit"></i>编辑详情规则</h4>
+                            <h4><i class="icon-edit"></i>编辑附加数据规则</h4>
                         </header>
                         <div class="tab-content">
-                            <div class="tab-pane active" id="parser-base">
+                            <div class="tab-pane active" id="extra-base">
                                 <div class="col-lg-12">
                                     <h5>规则信息</h5>
-                                    <input type="hidden" name="mode" value="parser-base">
+                                    <input type="hidden" name="mode" value="extra-base">
                                 </div>
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">规则名称</label>
@@ -61,11 +61,54 @@
                                             <option value="bbs-item" {% if rule.get('type', '') == "bbs-item"%}
                                             selected{% endif %}>论坛回帖</option>
                                             <option value="comment" {% if rule.get('type', '') == "comment"%}
-                                            selected{% endif %}>>评论</option>
+                                            selected{% endif %}>评论</option>
                                             <option value="interact" {% if rule.get('type', '') == "interact"%}
-                                            selected{% endif %}>>互动数</option>
+                                            selected{% endif %}>互动数</option>
                                             <option value="extract" {% if rule.get('type', '') == "extract"%}
-                                            selected{% endif %}>>附加数据</option>
+                                            selected{% endif %}>附加数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">更新频次</label>
+                                    <div class="col-lg-9">
+                                        <select name="frequency" class="form-control">
+                                            {% for k,v in app_config.get('frequencymap_sorted') %}
+                                            <option value="{{ k }}" {% if rule['frequency'] == k %}selected{%
+                                            endif %}>{{ v[1] }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">时效</label>
+                                    <div class="col-lg-9">
+                                        <select name="expire" class="form-control" data-parsley-required="true">
+                                            {% for k,v in app_config.get('expiremap_sorted') %}
+                                            <option value="{{ k }}" {% if rule.get('expire', 0) == k %}selected{% endif %} >{{ v
+                                            }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">基础url</label>
+                                    <div class="col-lg-9">
+                                        <input type="text" name="url" placeholder="sample.com" class="form-control"
+                                               data-parsley-required="true" data-parsley-length="[3,32]"
+                                               value="{{ rule.get('url', '') }}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">参数匹配模式</label>
+                                    <div class="col-lg-9">
+                                        <select name="param-mode" class="form-control">
+                                            <option value="get" {% if rule.get('mode', 'get') == 'get' %}selected{%
+                                            endif %} >get请求</option>
+                                            <option value="format" {% if rule.get('mode', 'get') == 'format' %}selected{%
+                                            endif %} >格式化url</option>
+                                            <option value="replace" {% if rule.get('mode', 'get') == 'replace' %}selected{%
+                                            endif %}>替换url</option>
                                         </select>
                                     </div>
                                 </div>
@@ -89,8 +132,8 @@
                                 {% include 'settings/extra_pre_parse.html' %}
 
                             </div>
-                            <div id="parser-item" class="tab-pane">
-                                <input type="hidden" name="mode" value="parser-item">
+                            <div id="extra-item" class="tab-pane">
+                                <input type="hidden" name="mode" value="extra-item">
                                 {% include 'settings/item_request_base.html' %}
                                 {% include 'settings/item_request_params.html' %}
                                 {% include 'settings/item_paging.html' %}
@@ -101,10 +144,10 @@
                                 {% include 'settings/item_parse_custom.html' %}
                                 {% include 'settings/item_request_retry.html' %}
                             </div>
-                            <div id="parser-script" class="tab-pane">
+                            <div id="extra-script" class="tab-pane">
                                 <div class="col-lg-12">
                                     &nbsp;
-                                    <input type="hidden" name="mode" value="parser-script">
+                                    <input type="hidden" name="mode" value="extra-script">
                                 </div>
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">自定义脚本</label>
@@ -126,7 +169,7 @@
                                     <label class="col-lg-2 control-label"></label>
                                     <div class="col-lg-10">
                                         <input type="hidden" name="script-test-rule" value="{{ rule['uuid'] }}">
-                                        <button type="button" name="script-test" data-ride="test-parser-rule"
+                                        <button type="button" name="script-test" data-ride="test-extra-rule"
                                                 data-prefix="script-test" data-mode="item" data-page="1">测试</button>
                                     </div>
                                 </div>
@@ -204,13 +247,13 @@ $('#form_submit').click(function () {
     })
     if (vr) {
         var data = $step.find(':input').serialize()
-        if ($(".nav-tabs li.active a").attr("href") == '#parser-script') {
+        if ($(".nav-tabs li.active a").attr("href") == '#extra-script') {
             data += '&script='+ encodeURIComponent(editor.getValue());
         }
         $.ajax({
             type: "post",
             dataType: "json",
-            url: '/parser/{{ rule["uuid"] }}/edit',
+            url: '/extra/{{ rule["uuid"] }}/edit',
             data: data,
             success: function(result){
                 if (result.status == 200) {
