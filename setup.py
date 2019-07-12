@@ -50,7 +50,7 @@ setup(
             'cdspider_admin = cdspider_admin.run:main',
         ],
         'cdspider.dao.mongo': [
-            'AdminDB=cdspider_admin.database.mongo.AdminDB',
+            'AdminDB=cdspider_admin.database.mongo:AdminDB',
         ]
     }
 )

@@ -10,6 +10,7 @@
 import os
 import sys
 import logging
+import base64
 
 from six import reraise
 from six.moves import builtins
@@ -118,6 +119,7 @@ def before_request(*args, **kwargs):
         return
     need_auth = app.config.get('need_auth', False)
     if need_auth:
+        app.logger.error(login.current_user)
         if not login.current_user.is_active:
             if need_auth == 'header':
                 return app.login_response
@@ -151,11 +153,11 @@ class User(login.UserMixin):
             if self.id == app.config.get('webui_username') \
                     and self.password == app.config.get('webui_password'):
                 self.name = app.config.get('webui_username')
-                self.ruleid = 0
+                self.ruleid = AdminDB.ADMIN_RULE_ROOT
                 return True
         else:
-            admindb = app.config.get("admindb")
-            res, info = admindb.verify_user(self.id, self.password)
+            Admindb = app.config.get("db")["AdminDB"]
+            res, info = Admindb.verify_user(self.id, self.password)
             if res:
                 self.name = info['name']
                 self.ruleid = info['ruleid']
@@ -168,9 +170,9 @@ class User(login.UserMixin):
         if need_auth == "header":
             return self.is_authenticated
         else:
-            admindb = app.config.get("admindb")
-            info = admindb.get_detail_by_email(self.id)
-            if info['ruleid'] != AdminDB.ADMIN_RULE_NONE and info['status'] == AdminDB.ADMIN_STATUS_ACTIVE:
+            Admindb = app.config.get("db")["AdminDB"]
+            info = Admindb.get_detail_by_account(account=self.id)
+            if info['ruleid'] != AdminDB.ADMIN_RULE_NONE and info['status'] == AdminDB.STATUS_ACTIVE:
                 self.name = info['name']
                 self.ruleid = info['ruleid']
                 return True
