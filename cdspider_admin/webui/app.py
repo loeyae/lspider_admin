@@ -204,8 +204,12 @@ app.login_response = Response(
 
 @app.context_processor
 def utility_processor():
-    def format_paging_url(url, page):
-        return utils.build_query(url, "page=%s" % page)
+    def format_paging_url(url, query, page):
+        if not query:
+            query = {"page": page}
+        else:
+            query['page'] = page
+        return utils.build_query(url, utils.url_encode(query))
     return dict(format_paging_url=format_paging_url)
 
 @app.template_filter()
