@@ -5,17 +5,19 @@
                             </div>
                             <div class="col col-lg-6">
                                 <div class="dataTables_paginate paging_full_numbers" id="DataTables_Table_0_paginate">
-                                    <a tabindex="0" class="first paginate_button{% if not content['has_previous'] %} paginate_button_disabled{% endif %}" {% if content['has_previous'] %} href="{{ format_paging_url(request.url, 1) }}" {% endif %} id="DataTables_Table_0_first">首页</a>
-                                    <a tabindex="0" class="previous paginate_button{% if not content['has_previous'] %}  paginate_button_disabled{% endif %}" {% if content['has_previous'] %} href="{{ format_paging_url(request.url, content['current_page'] - 1) }}" {% endif %} id="DataTables_Table_0_previous">上一页</a>
+                                    <a tabindex="0" class="first paginate_button{% if not content['has_previous'] %} paginate_button_disabled{% endif %}" {% if content['has_previous'] %} href="{{ format_paging_url(request.path, 1) }}" {% endif %} id="DataTables_Table_0_first">首页</a>
+                                    <a tabindex="0" class="previous paginate_button{% if not content['has_previous'] %}  paginate_button_disabled{% endif %}" {% if content['has_previous'] %} href="{{ format_paging_url(request.path, content['current_page'] - 1) }}" {% endif %} id="DataTables_Table_0_previous">上一页</a>
                                     <span>
                                         {% for i in range(5, 0, -1) %}
                                         {% if (content['current_page'] + 3 - i) > 0 and content['current_page'] + 3 - i <= content['num_pages'] %}
-                                        <a href="{{ format_paging_url(request.url, content['current_page'] + 3 - i) }}" tabindex="0" class="{% if i == 3 %}paginate_active{% else %}paginate_button{% endif %}">{{content['current_page'] + 3 - i}}</a>
+                                        <a href="{{ format_paging_url(request.path, content['current_page'] + 3 - i) }}"
+                                           tabindex="0" class="{% if i == 3 %}paginate_active{% else %}paginate_button{% endif %}">{{content['current_page'] + 3 - i}}</a>
                                         {% endif %}
                                         {% endfor %}
                                     </span>
-                                    <a tabindex="0" class="next paginate_button{% if not content['has_next'] %} paginate_button_disabled{% endif %}" {% if content['has_next'] %} href="{{ format_paging_url(request.url, content['current_page'] + 1) }}" {% endif %} id="DataTables_Table_0_next">下一页</a>
-                                    <a tabindex="0" class="last paginate_button{% if not content['has_next'] %} paginate_button_disabled{% endif %}" {% if content['has_next'] %} href="{{ format_paging_url(request.url, content['num_pages']) }}" {% endif %} id="DataTables_Table_0_last">末页</a>
+                                    <a tabindex="0"
+                                       class="next paginate_button{% if not content['has_next'] %} paginate_button_disabled{% endif %}" {% if content['has_next'] %} href="{{ format_paging_url(request.path, content['current_page'] + 1) }}" {% endif %} id="DataTables_Table_0_next">下一页</a>
+                                    <a tabindex="0" class="last paginate_button{% if not content['has_next'] %} paginate_button_disabled{% endif %}" {% if content['has_next'] %} href="{{ format_paging_url(request.path, content['num_pages']) }}" {% endif %} id="DataTables_Table_0_last">末页</a>
                                 </div>
                             </div>
                         </div>
