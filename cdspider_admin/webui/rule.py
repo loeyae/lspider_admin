@@ -62,7 +62,7 @@ def rule_add():
     else:
         try:
             data = request.form.to_dict()
-            mrid = data.pop('rid')
+            mrid = data.pop('rid', 0)
             mode = data.pop("mode")
             if mode == "rule-base":
                 dic = build_rule_data(mode, data);
