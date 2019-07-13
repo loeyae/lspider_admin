@@ -41,7 +41,7 @@ def urls_add():
         return render_template('error.html', message="无效的任务")
     listruledb = app.config.get('db')['ListRuleDB']
     if request.method=='GET':
-        listrule = listruledb.get_list({"tid": int(tid)})
+        listrule = listruledb.get_list({"tid": int(tid), "type": listruledb.RULE_TYPE_DEFAULT})
         app_config = app.config.get('app_config')
         return render_template('/urls/add.html', app_config=app_config, task_info=task_info, rule_list=listrule,
                                tid=tid)
@@ -86,7 +86,7 @@ def urls_update(id):
     task_info = task_obj.get_detail(tid)
     if request.method=='GET':
         listruledb = app.config.get('db')['ListRuleDB']
-        listrule = listruledb.get_list({"tid": int(tid)})
+        listrule = listruledb.get_list({"tid": int(tid), "type": listruledb.RULE_TYPE_DEFAULT})
         app_config = app.config.get('app_config')
         return render_template('/urls/update.html', rule_list=listrule, urls_info=urls_info, app_config=app_config,
                                task_info=task_info)
