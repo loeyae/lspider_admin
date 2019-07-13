@@ -206,9 +206,9 @@ app.login_response = Response(
 def utility_processor():
     def format_paging_url(url, query, page):
         if not query:
-            query = {"page": page}
+            query = {"page": str(page)}
         else:
-            query['page'] = page
+            query['page'] = str(page)
         return utils.build_query(url, utils.url_encode(query))
     return dict(format_paging_url=format_paging_url)
 
