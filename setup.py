@@ -17,6 +17,7 @@ setup(
     author_email='loeyae@gmail.com',
     description='数据采集框架管理后台',
     install_requires = [
+        'xlwt>=1.3.0',
         'flask>=0.12.2',
         'flask_login>=0.4.1',
         'WsgiDAV==2.3.0',

@@ -93,6 +93,7 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, u
         app.config['webui_username'] = username
     if password:
         app.config['webui_password'] = password
+    app.config['runtime_dir'] = g.get('runtime_dir')
     app.config['need_auth'] = need_auth
     app.config['process_time_limit'] = process_time_limit
     app.config['context'] = ctx
