@@ -1,0 +1,136 @@
+{% extends 'layout.html' %}
+{% block body %}
+<!-- / header -->
+<!-- / nav -->
+<section id="content">
+    <section class="main padder">
+        <div class="clearfix">
+            <h4><i class="icon-table"></i>关键词列表</h4>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <!-- .breadcrumb -->
+                <ul class="breadcrumb">
+                  <li><a href="/"><i class="icon-home"></i>首页</a></li>
+                  <li class="active">关键词</li>
+                </ul>
+                <!-- / .breadcrumb -->
+            </div>
+            <div class="col-lg-12">
+                <section class="panel">
+
+                    <div class="row text-small">
+                        <label class="col-lg-2 control-label">筛选条件:</label>
+                        <div class="col-lg-3 m-b-mini">
+                            <input type="hidden" name="query" value="{{ query|escape }}">
+                            <select class="input-mini inline" name="year">
+                                {% for i in range(3) %}
+                                <option value="{{ year - i }}" {% if year - i == cyear %}selected{% endif %}>{{ year
+                                    - i
+                                    }}年</option>
+                                {% endfor %}
+                            </select>
+                            <select class="input-mini inline" name="month">
+                                {% for i in range(12) %}
+                                <option value="{{ i + 1 }}" {% if i + 1 == month %}selected{% endif %}>{{ i + 1
+                                    }}月</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit" name="submit" class="btn btn-primary btn-mini">筛选</button>
+                        </div>
+                        <div class="col-lg-6 m-b-mini">
+                            <label class="control-label">包含内容</label>
+                            <input type="checkbox" name="detail" value="1">
+                            <label class="control-label">特殊字段</label>
+                            <input type="text" name="field" value="" class="input-mini inline">
+                            <button type="submit" name="export" class="btn btn-primary btn-mini">导出</button>
+                        </div>
+                    </div>
+                    <div class="pull-out m-t-small">
+                        <table class="table table-striped b-t text-small">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox"></th>
+                                    <th class="th-sortable" data-toggle="class">文章ID
+                                        <span class="th-sort">
+                                            <i class="icon-sort-down text"></i>
+                                            <i class="icon-sort-up text-active"></i>
+                                            <i class="icon-sort"></i>
+                                        </span>
+                                    </th>
+                                    <th>标题</th>
+                                    <th>链接</th>
+                                    <th>简介</th>
+                                    <th>创建时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                {% for item in article_list %}
+                                <tr>
+                                    <td>
+                                        <input type="checkbox" name="id" class="checkbox" value="{{ item['rid'] }}">
+                                    </td>
+                                    <td >{{ item['rid'] }}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" title="{{ item['title'] }}">
+                                            {{ item['title']|striptags|truncate(30) }}
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <a href="{{ item['url'] }}" title="{{ item['url'] }}" target="_blank">
+                                        {{ item['url']|striptags|truncate(50) }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item['content']|striptags|truncate(50) }}</td>
+                                    <td>{{ (item['pubtime'] or item['ctime'])|time_func }}</td>
+
+<!--                                    <td >-->
+
+<!--                                        <input class="btn btn-default btn-small" name="keywords-edit" type="button" data-kid="{{  item['uuid'] }}" value="编辑"/>-->
+<!--                                        <input class="btn btn-default btn-small" name="keywords-active" type="button" data-kid="{{  item['uuid'] }}" value="激活" {% if app_config.get('status', {}).get(str(item['status']), "初始化") == "激活" %}disabled{% endif %}/>-->
+
+<!--                                        <select class="input-small inline" name="keywords-oparate" data-kid="{{  item['uuid'] }}">-->
+<!--                                            <option value="default">更多操作</option>-->
+<!--                                            <option value="disable">禁用</option>-->
+<!--                                            <option value="delete">删除</option>-->
+<!--                                        </select>-->
+<!--                                    </td>-->
+                                </tr>
+                                {% endfor %}
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <footer class="panel-footer dataTables_wrapper">
+                        {% include 'paging.html' %}
+                    </footer>
+                </section>
+            </div>
+        </div>
+        <div class="hidden" id="hidden"></div>
+    </section>
+</section>
+{% endblock %}
+
+{% block custom_footer %}
+<script>
+$(function(){
+    $("[name=submit]").click(function() {
+        var query = $("[name=query]").val();
+        var year = $("[name=year]").val();
+        var month = $("[name=month]").val();
+        window.location.href = '/result/list?'+ query +'&year='+ year + '&month='+ month
+    })
+    $("[name=export]").click(function() {
+        var query = $("[name=query]").val();
+        var year = $("[name=year]").val();
+        var month = $("[name=month]").val();
+        var detail = $("[name=detail]").is(':checked') ? 1 : 0;
+        var href = '/result/export?'+ query +'&year='+ year + '&month='+ month +'&detail='+ detail +'&r='+ Date.parse(new Date());
+        $("#hidden").html("<a id='export-link' href='"+ href +"' target='_blank'>export</a>")
+        $("#export-link")[0].click()
+    })
+})
+</script>
+{% endblock %}
