@@ -65,7 +65,9 @@ def rule_add():
             mrid = data.pop('rid', 0)
             mode = data.pop("mode")
             if mode == "rule-base":
-                dic = build_rule_data(mode, data);
+                dic = build_rule_data(mode, data)
+                if 'type' in dic:
+                    dic['type'] = int(dic['type'])
                 dic['pid'] = task_info['pid']
                 dic['sid'] = task_info['sid']
                 dic['tid'] = task_info['uuid']
@@ -113,6 +115,8 @@ def rule_update(id):
             data = request.form.to_dict()
             mode = data.pop('mode', 'rule-base')
             data = build_rule_data(mode, data)
+            if 'type' in data:
+                data['type'] = int(data['type'])
             end = False
             if mode == 'rule-script':
                 end = True
