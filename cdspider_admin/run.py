@@ -112,10 +112,10 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, u
     if isinstance(scheduler_rpc, six.string_types):
         scheduler_rpc = connect_rpc(ctx, None, scheduler_rpc)
         app.config['scheduler_rpc'] = scheduler_rpc
-        app.config['newtask'] = lambda x: scheduler_rpc.newtask(x)
-        app.config['status'] = lambda x: scheduler_rpc.status(x)
-        app.config['frequency'] = lambda x: scheduler_rpc.frequency(x)
-        app.config['expire'] = lambda x: scheduler_rpc.expire(x)
+        app.config['newtask'] = lambda x: scheduler_rpc.newtask(json.dumps(x))
+        app.config['status'] = lambda x: scheduler_rpc.status(json.dumps(x))
+        app.config['frequency'] = lambda x: scheduler_rpc.frequency(json.dumps(x))
+        app.config['expire'] = lambda x: scheduler_rpc.expire(json.dumps(x))
     else:
         webui_scheduler = ctx.invoke(route, get_object=True)
 
@@ -139,8 +139,8 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, u
     if isinstance(spider_rpc, six.string_types):
         spider_rpc = connect_rpc(ctx, None, spider_rpc)
         app.config['spider_rpc'] = spider_rpc
-        app.config['fetch'] = lambda x: spider_rpc.fetch(x)
-        app.config['task'] = lambda x: spider_rpc.task(x)
+        app.config['fetch'] = lambda x: spider_rpc.fetch(json.dumps(x))
+        app.config['task'] = lambda x: spider_rpc.task(json.dumps(x))
     else:
         webui_fetcher = ctx.invoke(fetch, get_object=True, no_input=True)
 
