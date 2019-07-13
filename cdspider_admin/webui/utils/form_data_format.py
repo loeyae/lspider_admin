@@ -508,7 +508,7 @@ def build_form_data(data):
             data['parse']['pubtime_extract'] = pubtime_rule.get('extract', '')
 
         data['parse']['other'] = {}
-        if 'item' in parser and parser['item']:
+        if 'item' in parser:
             for _k, val in parser['item'].items():
                 data['parse']['other'][_k] = val
         elif parser:
