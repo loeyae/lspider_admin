@@ -22,7 +22,7 @@ class PageClass(object):
             has_previous = False
         content['has_previous'] = has_previous
         has_next = True
-        if current_page == num_pages:
+        if current_page == num_pages or num_pages == 0:
             has_next = False
         content['has_next'] = has_next
         previous_page_number = current_page - 1
