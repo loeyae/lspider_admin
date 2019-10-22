@@ -64,7 +64,7 @@
                                             selected{% endif %}>评论</option>
                                             <option value="interact" {% if rule.get('type', '') == "interact"%}
                                             selected{% endif %}>互动数</option>
-                                            <option value="extract" {% if rule.get('type', '') == "extract"%}
+                                            <option value="extend" {% if rule.get('type', '') == "extend"%}
                                             selected{% endif %}>附加数据</option>
                                         </select>
                                     </div>
@@ -95,7 +95,7 @@
                                     <label class="col-lg-2 control-label">基础url</label>
                                     <div class="col-lg-9">
                                         <input type="text" name="url" placeholder="sample.com" class="form-control"
-                                               data-parsley-required="true" 
+                                               data-parsley-required="true"
                                                value="{{ rule.get('url', '') }}">
                                     </div>
                                 </div>
@@ -169,8 +169,10 @@
                                     <label class="col-lg-2 control-label"></label>
                                     <div class="col-lg-10">
                                         <input type="hidden" name="script-test-rule" value="{{ rule['uuid'] }}">
-                                        <button type="button" name="script-test" data-ride="test-extra-rule"
-                                                data-prefix="script-test" data-mode="item" data-page="1">测试</button>
+                                        <button type="button" name="script-test" data-ride="test-parser-rule"
+                                                data-prefix="script-test"
+                                                data-mode="{{ rule.get('type', '') }}"
+                                                data-page="1">测试</button>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -220,6 +222,12 @@
 <script src="{{ url_for('static', filename='js/parsley/zh_cn.js') }}"></script>
 <script src="{{ url_for('static', filename='js/parsley/zh_cn.extra.js') }}"></script>
 <script>
+$("[name='type']").change(function() {
+    var data = $(this).val();
+    $("[name='script-test']").data("mode", data)
+    alert($("[name='script-test']").data('mode'))
+})
+
 var editor = false
 $(".nav li:last a").on('shown.bs.tab', function (e) {
     if (!editor) {

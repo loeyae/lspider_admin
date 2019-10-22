@@ -60,7 +60,7 @@
                                             <option value="bbs-item">论坛回帖</option>
                                             <option value="comment">评论</option>
                                             <option value="interact">互动数</option>
-                                            <option value="extract">附加数据</option>
+                                            <option value="extend">附加数据</option>
                                         </select>
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                     <label class="col-lg-2 control-label"></label>
                                     <div class="col-lg-10">
                                         <input type="hidden" name="script-test-rule" value="">
-                                        <button type="button" name="script-test" data-ride="test-extra-rule"
+                                        <button type="button" name="script-test" data-ride="test-parser-rule"
                                         data-prefix="script-test" data-mode="item" data-page="1">测试</button>
                                     </div>
                                 </div>
@@ -226,13 +226,9 @@ function active_editor(){
         editor.setOption("theme", "eclipse");
     }
 }
-$("#item-paging-url-type").change(function() {
+$("[name='type']").change(function() {
     var data = $(this).val();
-    if (data == "match") {
-        $("#item-paging-url-extra").removeClass("hidden")
-    } else {
-        $("#item-paging-url-extra").addClass("hidden")
-    }
+    $("[name='script-test']").data("mode", data)
 })
 
 function submit_extra(node){

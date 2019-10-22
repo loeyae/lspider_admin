@@ -32,7 +32,7 @@ def build_parse_other(formdata, prefix):
                     else:
                         data.update({_k:{"extract": v}})
             elif _k.endswith("-mode"):
-                    _k = _k[:-8]
+                    _k = _k[:-5]
                     if _k in data:
                         data[_k].update({"mode": v})
                     else:
