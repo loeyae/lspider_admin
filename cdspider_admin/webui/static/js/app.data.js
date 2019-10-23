@@ -503,7 +503,9 @@ $(document).ready(function() {
                                 if (typeof(list[idx]) == 'object') {
                                     for (var k in list[idx]) {
                                         var item = list[idx][k];
-                                        txt += '<tr><td>'+ k +'</td><td><pre class="pre-scrollable" style="max-height: 100px;">'+ item + '</pre></td></tr>';
+                                        txt += '<tr><td>'+ idx +'-'+ k +'</td><td><pre '+
+                                        'class="pre-scrollable" '+
+                                         'style="max-height: 100px;">'+ item + '</pre></td></tr>';
                                     }
                                 } else {
                                     var item = list[idx];
