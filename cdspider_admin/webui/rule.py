@@ -68,6 +68,8 @@ def rule_add():
                 dic = build_rule_data(mode, data)
                 if 'type' in dic:
                     dic['type'] = int(dic['type'])
+                else:
+                    dic['type'] = rule_obj.RULE_TYPE_DEFAULT
                 dic['pid'] = task_info['pid']
                 dic['sid'] = task_info['sid']
                 dic['tid'] = task_info['uuid']

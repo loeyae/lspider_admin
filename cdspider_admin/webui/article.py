@@ -94,11 +94,11 @@ def article_export():
 
         article_count=articledb_obj.get_count(ctime, where=where)
         if article_count > 0:
-            file_name = "result_export_%s.xlsx" % time.strftime("%Y%m%d%H%M%S")
+            file_name = "result_export_%s.xls" % time.strftime("%Y%m%d%H%M%S")
             book = xlwt.Workbook(encoding="utf-8")
             sheet = book.add_sheet('sheet 1')
             r = 1
-            row = ['title', 'row']
+            row = ['title', 'url']
             if fields:
                 for item in fields:
                     row.append(item)
@@ -115,7 +115,7 @@ def article_export():
                         for key in fields:
                             v = article.get(key, "") or article.get("result", {}).get(key, "") or article.get(
                                 "detail", {}).get(key, "")
-                            row.append(v)
+                            row.append(str(v))
                     if detail:
                         row.append(article['content'])
                     row.append(time.strftime("%Y-%m-%d %H:%M", time.localtime(article['pubtime'] or article['ctime'])))

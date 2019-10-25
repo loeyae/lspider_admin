@@ -75,7 +75,7 @@
                                     </td>
                                     <td>{{ item['ctime']|time_func }}</td>
                                     <td >
-                                        {% if item['preid'] != 0 %}
+                                        {% if item['preid'] and item['preid'] != 0 %}
                                         <input class="btn btn-default btn-small" name="update-pre-rule" type="button"
                                                data-rid="{{ item['preid'] }}" value="修改预处理规则"/>
                                         {% else %}

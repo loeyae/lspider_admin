@@ -127,7 +127,9 @@ $(function(){
         var year = $("[name=year]").val();
         var month = $("[name=month]").val();
         var detail = $("[name=detail]").is(':checked') ? 1 : 0;
-        var href = '/result/export?'+ query +'&year='+ year + '&month='+ month +'&detail='+ detail +'&r='+ Date.parse(new Date());
+        var field = $("[name=field]").val()
+        var href = '/result/export?'+ query +'&year='+ year + '&month='+ month +'&detail='+
+        detail +'&field='+ field +'&r='+ Date.parse(new Date());
         $("#hidden").html("<a id='export-link' href='"+ href +"' target='_blank'>export</a>")
         $("#export-link")[0].click()
     })
