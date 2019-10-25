@@ -119,7 +119,6 @@ def before_request(*args, **kwargs):
         return
     need_auth = app.config.get('need_auth', False)
     if need_auth:
-        app.logger.error(login.current_user)
         if not login.current_user.is_active:
             if need_auth == 'header':
                 return app.login_response
