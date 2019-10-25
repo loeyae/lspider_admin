@@ -78,12 +78,12 @@ $(function(){
         validateString: function(value) {
             var words = value.split(/(\r\n|\n|\r)/)
             var ret = true
-            for (var word in words){
+            for (var i=1;i<words.length;i++){
+                var word = words[i]
                 if (word == '\r' || word == '\n') {
                     continue
                 }
-                if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2,
-                128)) {
+                if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2, 128)) {
                     return false
                 }
             }
