@@ -82,14 +82,15 @@ $(function(){
                 if (word == '\r' || word == '\n') {
                     continue
                 }
-                if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2, 32)) {
+                if (!window.Parsley._validatorRegistry.validators.length.validateString(word, 2,
+                128)) {
                     return false
                 }
             }
             return ret
         },
         messages: {
-          "zh-cn": '请填写2-32个字符的关键词'
+          "zh-cn": '请填写2-128个字符的关键词'
         }
     });
     $("[name=reset]").click(function(){

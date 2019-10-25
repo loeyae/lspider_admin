@@ -24,7 +24,9 @@
               <div class="form-group">
                 <label class="col-lg-2 control-label">关键词</label>
                 <div class="col-lg-9">
-                    <input type="text" name="word" placeholder="关键词" class="form-control" data-parsley-required="true" data-parsley-length="[2,32]" value="{{ keyword['word'] }}">
+                    <input type="text" name="word" placeholder="关键词" class="form-control"
+                           data-parsley-required="true" data-parsley-length="[2,128]"
+                           value="{{ keyword['word'] }}">
                 </div>
               </div>
 
