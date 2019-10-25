@@ -106,6 +106,7 @@ def urls_update(id):
                    app.config['frequency']({'uid': id, 'mode': task_info['type'], "frequency": frequency})
                if expire != urls_info.get("expire"):
                    app.config['expire']({'uid': id, 'mode': task_info['type'], "expire": expire})
+            return redirect('/urls/list?tid=%s' % tid)
         except Exception as e:
             app.logger.error(traceback.format_exc())
             return render_template('error.html', message="编辑URL出错了")
