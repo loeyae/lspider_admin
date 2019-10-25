@@ -47,7 +47,6 @@ def extra_add():
                 dic['paging'] = None
                 dic['unique'] = None
                 dic['parse'] = None
-                dic['url'] = None
                 dic['script'] = None
                 rid = extradb_obj.insert(dic)
                 return jsonify({"status": 200, "message": "Ok", "data": {"rid": rid}})
