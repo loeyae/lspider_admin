@@ -6,23 +6,30 @@
 __author__="Zhang Yi <loeyae@gmail.com>"
 __date__ ="$2019-04-09 23:10$"
 import time
-from cdspider.libs.constants import HANDLER_MODE_DEFAULT_ITEM
+from cdspider.libs.constants import *
 from cdspider.run import *
 
 @cli.command()
+@click.option('-w', '--where', callback=load_param, help="condition")
+@click.option('-c', '--created', default=0, help="create time")
 @click.pass_context
-def newtask(ctx):
-    webui_scheduler = ctx.invoke(route, get_object=True)
-    def newtask(x):
-        return webui_scheduler.newtask(x)
-
-    g = ctx.obj
-    urls_db = g.get('db')['UrlsDB']
-    uid = 0
+def build_result_work(ctx, where, created):
+    if created == 0:
+        created = int(time.time())
+    rid = "0"
     while True:
-        for item in urls_db.get_new_list(0):
-            pass
-        break
+        has_item = False
+        where["rid"] = {"$gt": rid}
+        result = ctx.obj['db']['ArticlesDB'].get_list(created, where=where, sort=[("rid", 1)])
+        for item in result:
+            has_item = True
+            rid = item['rid']
+            task = dict({
+                "rid": item['rid'],
+            })
+            ctx.obj['queue'][QUEUE_NAME_SPIDER_TO_RESULT].put_nowait(task)
+        if has_item is False:
+            break
 
 
 @cli.command()
