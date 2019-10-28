@@ -115,7 +115,7 @@ app.handle_url_build_error = error_url_handler
 
 @app.before_request
 def before_request(*args, **kwargs):
-    if request.endpoint in ('signin', 'signup', 'static', 'attach', ):
+    if request.endpoint in ('signin', 'signup', 'static', 'attach', "result/export"):
         return
     need_auth = app.config.get('need_auth', False)
     if need_auth:
