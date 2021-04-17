@@ -8,7 +8,10 @@
 """
 
 import base64
-from flask import request, Response, url_for, render_template, redirect, flash, abort, g
+
+from flask import (Response, abort, flash, g, redirect, render_template,
+                   request, url_for)
+
 try:
     import flask_login as login
 except ImportError:
@@ -18,8 +21,11 @@ try:
     from flask_login.utils import login_user, logout_user
 except ImportError:
     from flask.ext.login.utils import login_user, logout_user
+
 from cdspider_admin.database.base import AdminDB
-from .app import app, User
+
+from .app import User, app
+
 
 @app.route('/login', methods=['POST', 'GET'])
 def signin():
@@ -41,17 +47,22 @@ def signin():
 @app.route('/register', methods=['POST', 'GET'])
 def signup():
     error = None
-    if request.method == 'POST':
-        admindb = app.config.get("admindb")
-        aid = admindb.insert({
-                    "email": request.form['email'],
-                    "password": request.form['password'],
-                    "ruleid": AdminDB.ADMIN_RULE_NONE,
-                    })
-        if aid:
-            return redirect(url_for("signin"))
-        else:
-            error = '无效的用户名/密码'
+    need_auth = app.config.get('need_auth', False)
+    if need_auth == False || need_auth == "header":
+        error = '未开放注册'
+    else:
+        if request.method == 'POST':
+            db = app.config.get("db")
+            admindb = db["AdminDB"]
+            aid = admindb.insert({
+                        "account": request.form['email'],
+                        "password": request.form['password'],
+                        "ruleid": AdminDB.ADMIN_RULE_NONE,
+                        })
+            if aid:
+                return redirect(url_for("signin"))
+            else:
+                error = '无效的用户名/密码'
     return render_template('signup.html', error=error)
 
 @app.route("/logout", methods=['GET'])

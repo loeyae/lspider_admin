@@ -7,23 +7,26 @@
 :date:    2019-04-09 23:19
 """
 
+import cgi
+import re
+import socket
 import sys
 import time
-import socket
-import re
-import cgi
 import traceback
 from urllib.parse import urljoin
+
+from flask import json, render_template, request
 from six import iteritems, itervalues
-from flask import render_template, request, json
 
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
 
+from cdspider.libs.utils import (__redirection__, dictjoin,
+                                 get_current_month_days)
+
 from .app import app
-from cdspider.libs.utils import dictjoin, get_current_month_days, __redirection__
 
 index_fields = ['pid', 'type', 'status', 'comments', 'rate', 'updatetime']
 

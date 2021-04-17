@@ -7,4 +7,5 @@
 :date:    2019/4/9 23:27
 """
 
-from . import app, login, index, project, site, task, urls, rule, parser, keyword, extra, article
+from . import (app, article, extra, index, keyword, login, parser, project,
+               rule, site, task, urls)

@@ -5,7 +5,7 @@
 __author__ = "Zhang Yi <loeyae@gmail.com>"
 __date__ = "$2019-04-09 23:02$"
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 setup(
     name='cdspider_admin',

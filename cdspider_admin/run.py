@@ -6,8 +6,10 @@
 __author__="Zhang Yi <loeyae@gmail.com>"
 __date__ ="$2019-04-09 23:10$"
 import time
+
 from cdspider.libs.constants import *
 from cdspider.run import *
+
 
 @cli.command()
 @click.option('-w', '--where', callback=load_param, help="condition")

@@ -7,9 +7,11 @@
 :date:    2019/4/10 13:43
 """
 import time
+
+from cdspider.database.mongo.Mongo import Mongo
 from cdspider.libs import utils
 from cdspider_admin.database.base import AdminDB as BaseAdmin
-from cdspider.database.mongo.Mongo import Mongo
+
 
 class AdminDB(Mongo, BaseAdmin):
 

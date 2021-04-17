@@ -7,21 +7,24 @@
 :date:    2019-04-09 23:19
 """
 
+import base64
+import logging
 import os
 import sys
-import logging
-import base64
 
+from flask import (Flask, Response, g, redirect, render_template, request,
+                   url_for)
 from six import reraise
 from six.moves import builtins
 from six.moves.urllib.parse import urljoin
-from flask import Flask, render_template, request, Response, redirect, url_for, g
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
-from cdspider_admin.database.base import AdminDB
+
 from cdspider.libs import utils
+from cdspider_admin.database.base import AdminDB
 
 if os.name == 'nt':
     import mimetypes
@@ -38,10 +41,10 @@ class CDSpiderFlask(Flask):
         return logger
 
     def run(self, host=None, port=None, debug=None, **options):
-        import tornado.wsgi
-        import tornado.ioloop
         import tornado.httpserver
+        import tornado.ioloop
         import tornado.web
+        import tornado.wsgi
 
         if host is None:
             host = '127.0.0.1'
@@ -215,6 +218,7 @@ def utility_processor():
 @app.template_filter()
 def time_func(ti):
     import time
+
     # ti=1516954700
     t=time.localtime(ti)
     return time.strftime('%Y-%m-%d %H:%M:%S',t)
