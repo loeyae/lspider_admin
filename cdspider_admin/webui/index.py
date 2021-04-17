@@ -111,8 +111,12 @@ def runtask():
         }
 
     try:
-        task = gtask(task)
-        ret = json.loads(fetch(task))
+        result = json.loads(gtask(task))
+        broken_exc = result.get('broken_exc')
+        if broken_exc is None and result.get('task'):
+            ret = json.loads(fetch(result.get('task')))
+        else:
+            ret = result
     except socket.error as e:
         app.logger.warning('connect to fetcher rpc error: %r', e)
         return json.dumps({"result": None, "status": 500}), 200, {'Content-Type': 'application/json'}
