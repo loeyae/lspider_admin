@@ -8,15 +8,19 @@
 """
 import time
 import traceback
-from flask import request, render_template, redirect, json, jsonify
+
+from flask import json, jsonify, redirect, render_template, request
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
-from .app import app
-from .utils.page_class import page_obj
+
 from cdspider.libs.utils import iterator2list
-from .utils.form_data_format import build_rule_data, build_form_data
+
+from .app import app
+from .utils.form_data_format import build_form_data, build_rule_data
+from .utils.page_class import page_obj
 
 
 @app.route('/rule/list', methods=['GET'])

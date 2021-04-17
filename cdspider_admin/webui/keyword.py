@@ -1,14 +1,18 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import traceback
+
+from flask import jsonify, redirect, render_template, request
 from pymongo.errors import *
-from flask import request, render_template, redirect, jsonify
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
 from .app import app
 from .utils.page_class import page_obj
+
 
 @app.route('/keyword/list', methods=['GET'])
 def keyword_list():

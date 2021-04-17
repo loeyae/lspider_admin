@@ -5,17 +5,21 @@
 :date:    19-7-13 上午8:02
 """
 
+import datetime
 import io
 import time
-import datetime
+
 import xlwt
-from flask import request, render_template, redirect, jsonify, send_file
+from flask import jsonify, redirect, render_template, request, send_file
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
 from cdspider.database.base import ArticlesDB
 from cdspider.libs import utils
+
 from .app import app
 from .utils.page_class import page_obj
 

@@ -8,14 +8,18 @@
 """
 
 import traceback
-from flask import request, render_template, jsonify
+
+from flask import jsonify, render_template, request
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
+from cdspider.libs import utils as cdutils
+
 from .app import app
 from .utils.page_class import page_obj
-from cdspider.libs import utils as cdutils
 
 
 #启用页
@@ -301,7 +305,7 @@ def task_update(tid):
                 return jsonify({"status": 500, "message": "无效的任务。"})
             data = request.form.to_dict()
             ret = taskdb_obj.update(tid, data)
-            if ret:
+            if not ret:
                 return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:

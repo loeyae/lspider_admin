@@ -2,14 +2,18 @@
 # -*- coding:utf-8 -*-
 import time
 import traceback
-from flask import request, render_template, redirect, json, jsonify
+
+from flask import json, jsonify, redirect, render_template, request
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
+from cdspider.libs.utils import iterator2list
+
 from .app import app
 from .utils.page_class import page_obj
-from cdspider.libs.utils import iterator2list
 
 
 @app.route('/urls/list', methods=['GET'])

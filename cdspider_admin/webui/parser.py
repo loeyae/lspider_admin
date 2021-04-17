@@ -7,14 +7,18 @@
 :date:    2019/4/21 11:17
 """
 import traceback
-from flask import request, render_template, redirect, jsonify
+
+from flask import jsonify, redirect, render_template, request
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
 from .app import app
+from .utils.form_data_format import build_form_data, build_parser_data
 from .utils.page_class import page_obj
-from .utils.form_data_format import build_parser_data, build_form_data
+
 
 @app.route('/parser/list', methods=['GET'])
 def parser_list():

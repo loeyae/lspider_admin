@@ -114,11 +114,9 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, a
     if 'frequencymap' in app.config['app_config'] and app.config['app_config']['frequencymap']:
         app.config['app_config']['frequencymap_sorted'] = sorted(app.config['app_config']['frequencymap'].items(), key=lambda d: int(d[0]))
     if 'sitetype' in app.config['app_config'] and app.config['app_config']['sitetype']:
-            app.config['app_config']['sitetype_sorted'] = sorted(app.config['app_config']['sitetype'].items(),
-                                                                  key=lambda d: int(d[0]))
+            app.config['app_config']['sitetype_sorted'] = sorted(app.config['app_config']['sitetype'].items(), key=lambda d: int(d[0]))
     if 'expiremap' in app.config['app_config'] and app.config['app_config']['expiremap']:
-            app.config['app_config']['expiremap_sorted'] = sorted(app.config['app_config']['expiremap'],
-                                                                  key=lambda d: int(d[0]))
+            app.config['app_config']['expiremap_sorted'] = sorted(app.config['app_config']['expiremap'], key=lambda d: int(d[0]))
 
     if isinstance(scheduler_rpc, six.string_types):
         scheduler_rpc = connect_rpc(ctx, None, scheduler_rpc)

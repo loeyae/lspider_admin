@@ -7,11 +7,14 @@
 :date:    2019/6/20 17:02
 """
 import traceback
-from flask import request, render_template, redirect, json, jsonify
+
+from flask import json, jsonify, redirect, render_template, request
+
 try:
     import flask_login as login
 except ImportError:
     from flask.ext import login
+
 from .app import app
 from .utils.page_class import page_obj
 
@@ -74,7 +77,7 @@ def project_update(id):
             if not data:
                 return jsonify({"status": 200, "message": "Ok", "data": {"update": False}})
             ret = projectdb_obj.update(id, data)
-            if ret:
+            if not ret:
                 return jsonify({"status": 500, "message": "更新失败", "data": {"update": False}})
             return jsonify({"status": 200, "message": "Ok", "data": {"update": True}})
         except Exception as e:
