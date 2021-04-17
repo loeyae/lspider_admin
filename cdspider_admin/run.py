@@ -87,11 +87,12 @@ def fetch_result_list(ctx, spider_cls, where, created, interval, output):
 @click.option('--scheduler-rpc', default=None, help='schedule rpc server')
 @click.option('--spider-rpc', default=None, help='spider rpc server')
 @click.option('--need-auth', is_flag=True, default=False, help='need username and password')
+@click.option('--auth-type', default=None, help='auth type，ex：header')
 @click.option('--username', help='username of lock -ed projects')
 @click.option('--password', help='password of lock -ed projects')
 @click.option('--process-time-limit', default=30, help='script process time limit in debug')
 @click.pass_context
-def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, username, password,
+def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, auth_type, username, password,
         process_time_limit, get_object=False):
     """
     采集系统可视化管理
@@ -103,7 +104,9 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, u
     if password:
         app.config['webui_password'] = password
     app.config['runtime_dir'] = g.get('runtime_dir')
-    app.config['need_auth'] = need_auth
+    if (need_auth) {
+        app.config['need_auth'] = auth_type if auth_type else need_auth
+    }
     app.config['process_time_limit'] = process_time_limit
     app.config['context'] = ctx
     app.config['db'] = g.get("db")
