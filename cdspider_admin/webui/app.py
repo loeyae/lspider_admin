@@ -118,11 +118,11 @@ app.handle_url_build_error = error_url_handler
 
 @app.before_request
 def before_request(*args, **kwargs):
-    app.logger.debug(request.endpoint)
     if request.endpoint in ('signin', 'signup', 'static', 'attach', "article_export"):
         return
     need_auth = app.config.get('need_auth', False)
-    if need_auth:
+    app.logger.debug("request: %s, need_auth: %s", request.endpoint, need_auth)
+    if need_auth != False:
         if not login.current_user.is_active:
             if need_auth == 'header':
                 return app.login_response
