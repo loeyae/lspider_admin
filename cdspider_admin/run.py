@@ -104,9 +104,8 @@ def web(ctx, webui_instance, host, port, scheduler_rpc, spider_rpc, need_auth, a
     if password:
         app.config['webui_password'] = password
     app.config['runtime_dir'] = g.get('runtime_dir')
-    if (need_auth) {
-        app.config['need_auth'] = auth_type if auth_type else need_auth
-    }
+    if need_auth:
+        app.config['need_auth'] = auth_type if auth_type != None else need_auth
     app.config['process_time_limit'] = process_time_limit
     app.config['context'] = ctx
     app.config['db'] = g.get("db")
