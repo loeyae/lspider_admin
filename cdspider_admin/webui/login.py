@@ -48,7 +48,7 @@ def signin():
 def signup():
     error = None
     need_auth = app.config.get('need_auth', False)
-    if need_auth == False || need_auth == "header":
+    if need_auth == False or need_auth == "header":
         error = '未开放注册'
     else:
         if request.method == 'POST':
