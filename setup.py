@@ -21,6 +21,7 @@ setup(
         'flask>=0.12.2',
         'flask_login>=0.4.1',
         'WsgiDAV==2.3.0',
+        'Werkzeug==0.16.1',
         'cdspider>=0.1',
         'cdspider_extra>=0.1',
         'cdspider_bbs>=0.1',
