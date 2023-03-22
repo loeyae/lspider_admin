@@ -7,6 +7,9 @@ __author__="Zhang Yi <loeyae@gmail.com>"
 __date__ ="$2019-04-09 23:10$"
 import time
 
+import click as click
+import six
+
 from cdspider.libs.constants import *
 from cdspider.run import *
 
