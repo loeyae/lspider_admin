@@ -1,0 +1,8 @@
+build
+Dockerfile
+cdspider_admin.egg-info
+dist
+README.md
+.git
+.gitignore
+*.rar

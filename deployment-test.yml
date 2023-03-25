@@ -1,0 +1,122 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loeye-spider-admin
+  namespace: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loeye-spider-admin
+  template:
+    metadata:
+      labels:
+        app: loeye-spider-admin
+    spec:
+      imagePullSecrets:
+        - name: docker-dev-loeyae
+      nodeSelector:
+        role: enginee
+      containers:
+        - name: loeye-spider-admin
+          image: docker.dev.loeyae.com/bys/cdspider_admin:7
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Asia/Shanghai
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: REDIS_HOST
+              value: "my-redis-master.database"
+            - name: REDIS_PASSWORD
+              value: zBNLNoZZ5Hapmf61vtBHHgXd7woBaWR4
+            - name: DATABASE_HOST
+              value: "119.4.240.179"
+            - name: DATABASE_PORT
+              value: "27017"
+            - name: DATABASE_USER
+              value: hqt
+            - name: DATABASE_PASSWORD
+              value: hqt200817
+            - name: DATABASE_DB
+              value: cdspider_sample
+            - name: QUEUE_PROT
+              value: "amqp"
+            - name: QUEUE_HOST
+              value: "my-rabbitmq.database"
+            - name: QUEUE_PORT
+              value: "5672"
+            - name: QUEUE_USER
+              value: hqt
+            - name: QUEUE_PASSWORD
+              value: "Mq123@hqt"
+            - name: EMAIL_PASSWORD
+              value: 200708Ablv
+            - name: BLOOMFILTER_URL
+              value: "redis://:zBNLNoZZ5Hapmf61vtBHHgXd7woBaWR4@my-redis-master.database:6379"
+            - name: LOG_LEVEL
+              value: logging.INFO
+          volumeMounts:
+            - mountPath: /app/loeye
+              name: data-volume
+      volumes:
+        - name: data-volume
+          hostPath:
+            path: /mnt/data/spider-admin
+            type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loeye-spider-admin
+  namespace: my-app
+spec:
+  ports:
+    - port: 80
+      targetPort: 5000
+      name: web
+    - port: 81
+      targetPort: 23333
+      name: srpc
+    - port: 82
+      targetPort: 24444
+      name: rpc
+  # clusterIP: None
+  selector:
+    app: loeye-spider-admin
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: loeye-spider-admin
+  namespace: my-app
+spec:
+  rules:
+    - host: sp-admin.dev.loeyae.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: loeye-spider-admin
+              servicePort: web
+    - host: sp-rpc.dev.loeyae.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: loeye-spider-admin
+              servicePort: rpc
+    - host: sp-srpc.dev.loeyae.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: loeye-spider-admin
+              servicePort: srpc
+  tls:
+    - secretName: dev.loeyae-certs

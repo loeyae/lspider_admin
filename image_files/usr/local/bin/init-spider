@@ -1,0 +1,53 @@
+#!/bin/sh
+set -e
+
+mkdir -p /app/loeye/config
+cp /app/config/* /app/loeye/config/
+
+mkdir -p /app/loeye/runtime
+chmod -R 777 /app/loeye/runtime
+
+#DATABASE SETTING
+if [ $DATABASE_PROT ]; then
+  sed -i "8s#\"protocol\": .*#\"protocol\": \"${DATABASE_PROT}\",#g" /app/loeye/config/main.json
+fi
+if [ $DATABASE_HOST ]; then
+  sed -i "9s#\"host\": .*#\"host\": \"${DATABASE_HOST}\",#g" /app/loeye/config/main.json
+fi
+if [ $DATABASE_PORT ]; then
+  sed -i "10s#\"port\": .*#\"port\": ${DATABASE_PORT},#g" /app/loeye/config/main.json
+fi
+if [ $DATABASE_DB ]; then
+  sed -i "11s#\"db\": .*#\"db\": \"${DATABASE_DB}\",#g" /app/loeye/config/main.json
+fi
+if [ $DATABASE_USER ]; then
+  sed -i "12s#\"user\": .*#\"user\": \"${DATABASE_USER}\",#g" /app/loeye/config/main.json
+fi
+if [ $DATABASE_PASSWORD ]; then
+  sed -i "13s#\"password\": .*#\"password\": \"${DATABASE_PASSWORD}\"#g" /app/loeye/config/main.json
+fi
+
+#QUEUE SETTING
+if [ $QUEUE_PROT ]; then
+  sed -i "16s#\"protocol\": .*#\"protocol\": \"${QUEUE_PROT}\",#g" /app/loeye/config/main.json
+fi
+if [ $QUEUE_HOST ]; then
+  sed -i "17s#\"host\": .*#\"host\": \"${QUEUE_HOST}\",#g" /app/loeye/config/main.json
+fi
+if [ $QUEUE_PORT ]; then
+  sed -i "18s#\"port\": .*#\"port\": ${QUEUE_PORT},#g" /app/loeye/config/main.json
+fi
+if [ $QUEUE_USER ]; then
+  sed -i "19s#\"user\": .*#\"user\": \"${QUEUE_USER}\",#g" /app/loeye/config/main.json
+fi
+if [ $QUEUE_PASSWORD ]; then
+  sed -i "20s#\"password\": .*#\"password\": \"${QUEUE_PASSWORD}\",#g" /app/loeye/config/main.json
+fi
+if [ $QUEUE_PREFIX ]; then
+  sed -i "22s#\"queue_prefix\": .*#\"queue_prefix\": \"${QUEUE_PREFIX}\"#g" /app/loeye/config/main.json
+fi
+
+#REDIS SETTING
+if [ $BLOOMFILTER_URL ]; then
+  sed -i "45s#\"bloomfilter_redis_url\": .*#\"bloomfilter_redis_url\": \"${BLOOMFILTER_URL}\"#g" /app/loeye/config/app.json
+fi
