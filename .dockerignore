@@ -1,5 +1,6 @@
 build
 Dockerfile
+deployment.yml
 cdspider_admin.egg-info
 dist
 README.md
