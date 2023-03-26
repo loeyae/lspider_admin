@@ -24,8 +24,8 @@ setup(
         'WsgiDAV==2.3.0',
         'Werkzeug==0.16.1',
         'cdspider>=0.1.4',
-        'cdspider_extra>=0.1.2',
-        'cdspider_bbs>=0.1.2',
+        'cdspider_extra>=0.1.3',
+        'cdspider_bbs>=0.1.3',
     ],
     package_data={
         'cdspider_admin': [
