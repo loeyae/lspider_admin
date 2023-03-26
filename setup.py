@@ -1,4 +1,4 @@
-#-*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # Licensed under the Apache License, Version 2.0 (the "License"),
 # see LICENSE for more details: http://www.apache.org/licenses/LICENSE-2.0.
 
@@ -16,18 +16,18 @@ setup(
     author='Zhang Yi',
     author_email='loeyae@gmail.com',
     description='数据采集框架管理后台',
-    install_requires = [
+    install_requires=[
         'click>=6.7'
         'xlwt>=1.3.0',
         'flask>=0.12.2',
         'flask_login>=0.4.1',
         'WsgiDAV==2.3.0',
         'Werkzeug==0.16.1',
-        'cdspider>=0.1.3',
+        'cdspider>=0.1.4',
         'cdspider_extra>=0.1.2',
         'cdspider_bbs>=0.1.2',
     ],
-    package_data = {
+    package_data={
         'cdspider_admin': [
             'config/main.json',
             'config/app.json',
