@@ -1,4 +1,4 @@
-FROM docker.dev.loeyae.com/library/spider-base:6
+FROM docker.dev.loeyae.com/library/spider-base:7
 WORKDIR /app
 
 COPY image_files/ /
