@@ -46,6 +46,12 @@ fi
 if [ $QUEUE_PREFIX ]; then
   sed -i "22s#\"queue_prefix\": .*#\"queue_prefix\": \"${QUEUE_PREFIX}\"#g" /app/loeye/config/main.json
 fi
+if [ $SELENIUM_ENGINE ]; then
+  sed -i "27s#\"engine\": .*#\"engine\": \"${SELENIUM_ENGINE}\"#g" /app/loeye/config/main.json
+fi
+if [ $SELENIUM_EXEC ]; then
+  sed -i "28s#\"exec_path\": .*#\"exec_path\": \"${SELENIUM_EXEC}\"#g" /app/loeye/config/main.json
+fi
 
 #REDIS SETTING
 if [ $BLOOMFILTER_URL ]; then

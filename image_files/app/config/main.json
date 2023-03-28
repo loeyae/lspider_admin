@@ -21,5 +21,14 @@
         "maxsize": 1000000,
         "queue_prefix": "local"
     },
-    "add_sys_path": true
+    "add_sys_path": true,
+    "crawler_setting": {
+        "selenium": {
+            "engine": "remote",
+            "exec_path": "http://ssa.dev.loeyae.com:80/wd/hub",
+            "capabilities": [
+                {"browserName": "chrome", "platform": "WIN10", "platformName": "WIN10", "seleniumProtocol": "WebDriver", "version": "108"}
+            ]
+        }
+    }
 }
