@@ -72,8 +72,7 @@
                         <select name="ruleId" class="form-control" data-parsley-required="true">
                             <option value="0">请选择</option>
                             {% for item in rule_list %}
-                            <option value="{{ item['uuid'] }}" {% if item['uuid'] == urls_info['ruleId']
-                            %}selected?{% endif %} >{{ item['name'] }}</option>
+                            <option value="{{ item['uuid'] }}" {% if item['uuid'] == urls_info['ruleId'] %}selected{% endif %} >{{ item['name'] }}</option>
                             {% endfor %}
                         </select>
                     </div>
