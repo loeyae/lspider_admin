@@ -9,6 +9,6 @@ tornado==4.5.3
 Werkzeug==2.0.3
 wsgidav==4.2.0
 xlwt==1.3.0
-cdspider==0.1.2
-cdspider_extra==0.1.2
-cdspider_bbs==0.1.2
+cdspider>=0.1.2
+cdspider_extra>=0.1.2
+cdspider_bbs>=0.1.2

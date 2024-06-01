@@ -8,6 +8,7 @@
 """
 
 import base64
+import builtins
 import logging
 import os
 import sys
@@ -15,8 +16,6 @@ import sys
 from flask import (Flask, Response, g, redirect, render_template, request,
                    url_for)
 from six import reraise
-from six.moves import builtins
-from six.moves.urllib.parse import urljoin
 
 try:
     import flask_login as login
@@ -43,7 +42,6 @@ class CDSpiderFlask(Flask):
     def run(self, host=None, port=None, debug=None, **options):
         import tornado.httpserver
         import tornado.ioloop
-        import tornado.web
         import tornado.wsgi
 
         if host is None:
